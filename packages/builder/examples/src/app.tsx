@@ -10,55 +10,26 @@ import {
   setDefaultTheme,
   useForm,
 } from "@fab4m/fab4m";
-import {
-  passwordField,
-  passwordVerifyField,
-  passwordValidateOldField,
-  validPassword,
-} from "../../src";
+import { formBuilder } from "../../src";
 import "react-datepicker/dist/react-datepicker.css";
 import "./index.css";
-import "fab4m/css/basic/basic.css";
+import { textFieldPlugin, textFieldWidgetPlugin } from "../../src/types/text";
+import "@fab4m/fab4m/css/basic/basic.css";
+
+const FormBuilder = formBuilder({
+  form: createForm({
+    text: textField({ label: "Text" }),
+  }),
+  plugins: {
+    types: [textFieldPlugin],
+    widgets: [textFieldWidgetPlugin],
+  },
+});
 
 export default function App() {
-  const [theme, changeTheme] = React.useState("basic");
-  const form = useForm(
-    () =>
-      createForm(
-        {
-          password: passwordField({
-            label: "Password",
-            validators: [validPassword()],
-          }),
-          password_verify: passwordVerifyField({
-            label: "Password with verify",
-          }),
-          password_old: passwordValidateOldField({
-            label: "password with old password field",
-          }),
-        },
-        {},
-        theme === "bulma" ? bulma : basic
-      ),
-    [theme]
-  );
-
-  const themeSelector = textField({
-    label: "Theme",
-    widget: selectWidget(["basic", "bulma"]),
-  });
-
   return (
     <div style={{ maxWidth: "900px", padding: "1em", margin: "0 auto" }}>
-      <h2 className="title">Password fields</h2>
-      <FormComponentView
-        name="theme"
-        theme={basic}
-        component={themeSelector}
-        value={theme}
-        onChange={changeTheme}
-      />
-      <StatefulFormView form={form} />
+      {FormBuilder}
     </div>
   );
 }
