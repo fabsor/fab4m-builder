@@ -1,4 +1,4 @@
-import { Form } from "@fab4m/fab4m";
+import { Form, SerializedForm } from "@fab4m/fab4m";
 import React from "react";
 import {
   createBrowserRouter,
@@ -9,6 +9,7 @@ import {
 import { NewComponent } from "../routes/new";
 import { Plugins } from "..";
 import { FormBuilder } from "../routes";
+import { NewComponentType } from "../routes/new_$type";
 
 export function routes(context: FormBuilderContext): RouteObject[] {
   return [
@@ -24,6 +25,10 @@ export function routes(context: FormBuilderContext): RouteObject[] {
           path: "new",
           element: <NewComponent />,
         },
+        {
+          path: "new/:type",
+          element: <NewComponentType />,
+        },
       ],
     },
   ];
@@ -34,7 +39,13 @@ export interface FormBuilderContext {
   plugins: Plugins;
 }
 
-export function formBuilder(context: { form: Form; plugins: Plugins }) {
-  const router = createBrowserRouter(routes(context));
+export function formBuilder(
+  context: { plugins: Plugins },
+  actions: {
+    loadForm: () => Promise<SerializedForm>;
+    saveForm: (form: SerializedForm) => Promise<SerializedForm>;
+  }
+) {
+  const router = createBrowserRouter(routes(context, actions));
   return <RouterProvider router={router} />;
 }

@@ -1,6 +1,6 @@
 import { FormComponentType, Components, WidgetType } from "@fab4m/fab4m";
 
-interface Plugin<SettingsType> {
+export interface Plugin<SettingsType> {
   editForm?: Components<SettingsType>;
   settingsFromForm?: (data: Record<string, unknown>) => SettingsType;
 }
