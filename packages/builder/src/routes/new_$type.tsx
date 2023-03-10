@@ -1,14 +1,4 @@
-import {
-  createForm,
-  group,
-  selectWidget,
-  textAreaField,
-  textField,
-  fromFormData,
-  useForm,
-  FormComponentWithName,
-  serializeComponent,
-} from "@fab4m/fab4m";
+import { fromFormData, useForm, serializeComponent } from "@fab4m/fab4m";
 import React, { useState } from "react";
 import {
   ActionFunction,
@@ -16,35 +6,25 @@ import {
   useOutletContext,
   useParams,
 } from "react-router-dom";
-import { FormStorage, FormComponentTypePlugin, WidgetTypePlugin } from "../";
-import { FormBuilderContext } from "../components/FormBuilder";
 import invariant from "tiny-invariant";
 import { findPlugin } from "../util";
 import { FormRoute } from "@fab4m/routerforms";
+import { ActionCreatorArgs, FormBuilderContext } from "../router";
+import { ComponentData, componentForm } from "../forms/component";
 
-interface ComponentData {
-  label: string;
-  name: string;
-  required: boolean;
-  description?: string;
-  settings?: Record<string, unknown>;
-  widget: string;
-  widgetSettings?: Record<string, unknown>;
-}
-
-export function action(
-  context: FormBuilderContext,
-  actions: FormStorage
-): ActionFunction {
+export function action({
+  plugins,
+  storage,
+}: ActionCreatorArgs): ActionFunction {
   return async ({ params, request }) => {
-    const type = findPlugin(params.type ?? "", context.plugins.types);
+    const type = findPlugin(params.type ?? "", plugins.types);
     const formData = await request.formData();
     const widgetName = formData.get("widget")?.toString();
-    const widget = findPlugin(widgetName ?? "", context.plugins.widgets);
+    const widget = findPlugin(widgetName ?? "", plugins.widgets);
     invariant(widget.type.init);
-    const form = newForm(type, widget);
-    const data = fromFormData<ComponentData>(form, formData);
-    await actions.addComponent(
+    const form = componentForm(type, plugins, widget);
+    const data = fromFormData(form, formData);
+    await storage.addComponent(
       serializeComponent({
         ...data,
         type: type.type,
@@ -58,44 +38,6 @@ export function action(
   };
 }
 
-function newForm(type: FormComponentTypePlugin, widget?: WidgetTypePlugin) {
-  let settingsForm = undefined;
-  let widgetSettingsForm = undefined;
-  if (type.editForm) {
-    settingsForm = group(
-      {
-        label: "Component settings",
-      },
-      type.editForm
-    );
-  }
-  if (widget?.editForm) {
-    widgetSettingsForm = group(
-      {
-        label: "Widget settings",
-      },
-      widget.editForm
-    );
-  }
-  return createForm<ComponentData>({
-    label: textField({
-      label: "Label",
-    }),
-    name: textField({
-      label: "Name",
-    }),
-    description: textAreaField({
-      label: "Description",
-    }),
-    widget: textField({
-      label: "Widget",
-      widget: selectWidget(["textfield"]),
-    }),
-    settingsForm,
-    widgetSettingsForm,
-  });
-}
-
 export function NewComponentType() {
   const context = useOutletContext<FormBuilderContext>();
   const type = useComponentType();
@@ -104,14 +46,10 @@ export function NewComponentType() {
     ? findPlugin(data.widget, context.plugins.widgets)
     : undefined;
   const form = useForm(
-    () => newForm(type, widgetType),
+    () => componentForm(type, context.plugins, widgetType),
     [type, widgetType]
   ).onDataChange(changeData);
-  return (
-    <section>
-      <FormRoute form={form} data={data} useRouteAction={true} />
-    </section>
-  );
+  return <FormRoute form={form} data={data} useRouteAction={true} />;
 }
 
 function useComponentType() {

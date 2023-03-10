@@ -20,7 +20,7 @@ import {
   useParams,
   useRouteLoaderData,
 } from "react-router-dom";
-import { FormStorage } from "../";
+import { FormComponentTypePlugin, FormStorage, WidgetTypePlugin } from "../";
 import {
   ActionCreatorArgs,
   FormBuilderContext,
@@ -41,7 +41,7 @@ interface ComponentData {
 }
 
 export function action({
-  context,
+  plugins,
   storage,
 }: ActionCreatorArgs): ActionFunction {
   return async ({ params, request }) => {
@@ -50,11 +50,17 @@ export function action({
       currentForm,
       invariantReturn(params.component)
     );
-    const plugin = findPlugin(currentComponent.type, context.plugins.types);
+    const plugin = findPlugin<FormComponentTypePlugin>(
+      currentComponent.type,
+      plugins.types
+    );
     const formData = await request.formData();
     const widgetName = formData.get("widget")?.toString();
-    const widgetPlugin = findPlugin(widgetName ?? "", context.plugins.widgets);
-    const form = componentForm(plugin, widgetPlugin);
+    const widgetPlugin = findPlugin<WidgetTypePlugin>(
+      widgetName ?? "",
+      plugins.widgets
+    );
+    const form = componentForm(plugin, plugins, widgetPlugin);
     const data = fromFormData<ComponentData>(form, formData);
     invariant(widgetPlugin.type.init);
     const widget =
@@ -83,10 +89,10 @@ export default function NewComponentType() {
     widgetSettings: component.widget.settings as Record<string, unknown>,
   });
   const widgetType = data.widget
-    ? findPlugin(data.widget, context.plugins.widgets)
+    ? findPlugin<WidgetTypePlugin>(data.widget, context.plugins.widgets)
     : undefined;
   const form = useForm(
-    () => componentForm(plugin, widgetType),
+    () => componentForm(plugin, context.plugins, widgetType),
     [plugin, widgetType]
   ).onDataChange(changeData);
   return (
@@ -102,6 +108,9 @@ function useComponentInfo() {
   invariant(params.component);
   const form = useRouteLoaderData("root") as SerializedForm;
   const component = findComponent(form, params.component);
-  const plugin = findPlugin(component.type, context.plugins.types);
+  const plugin = findPlugin<FormComponentTypePlugin>(
+    component.type,
+    context.plugins.types
+  );
   return { plugin, component };
 }

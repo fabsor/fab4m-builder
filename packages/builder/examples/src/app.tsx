@@ -8,25 +8,32 @@ import {
   textField,
   selectWidget,
   setDefaultTheme,
-  useForm, serialize
+  useForm,
+  serialize,
 } from "@fab4m/fab4m";
 import { formBuilder } from "../../src";
 import "react-datepicker/dist/react-datepicker.css";
 import "./index.css";
 import { textFieldPlugin, textFieldWidgetPlugin } from "../../src/types/text";
+import {
+  floatFieldPlugin,
+  integerFieldPlugin,
+  numberFieldWidgetPlugin,
+} from "../../src/types/number";
 import "@fab4m/fab4m/css/basic/basic.css";
 import { localFormStorage } from "../../src/localstorage";
 
 const form = createForm({
-    text: textField({ label: "Text" }),
+  text: textField({ label: "Text" }),
 });
 
-const FormBuilder = formBuilder({
-  plugins: {
-    types: [textFieldPlugin],
-    widgets: [textFieldWidgetPlugin],
+const FormBuilder = formBuilder(
+  {
+    types: [textFieldPlugin, integerFieldPlugin, floatFieldPlugin],
+    widgets: [textFieldWidgetPlugin, numberFieldWidgetPlugin],
   },
-}, localFormStorage("form", serialize(form)));
+  localFormStorage("form", serialize(form))
+);
 
 export default function App() {
   return (

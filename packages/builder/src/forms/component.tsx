@@ -1,15 +1,14 @@
 import {
   createForm,
-  FormComponent,
   group,
   selectWidget,
-  SerializedComponent,
   textAreaField,
   textField,
 } from "@fab4m/fab4m";
-import { FormComponentTypePlugin, WidgetTypePlugin } from "src";
+import { findComponentWidgets } from "../util";
+import { FormComponentTypePlugin, Plugins, WidgetTypePlugin } from "..";
 
-interface ComponentData {
+export interface ComponentData {
   label: string;
   name: string;
   required: boolean;
@@ -21,6 +20,7 @@ interface ComponentData {
 
 export function componentForm(
   type: FormComponentTypePlugin,
+  plugins: Plugins,
   widget?: WidgetTypePlugin
 ) {
   let settingsForm = undefined;
@@ -53,7 +53,12 @@ export function componentForm(
     }),
     widget: textField({
       label: "Widget",
-      widget: selectWidget(["textfield"]),
+      widget: selectWidget(
+        findComponentWidgets(type.type.name, plugins.widgets).map((widget) => [
+          widget.type.title,
+          widget.type.name,
+        ])
+      ),
     }),
     settings: settingsForm,
     widgetSettings: widgetSettingsForm,

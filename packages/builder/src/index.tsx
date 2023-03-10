@@ -1,3 +1,4 @@
+import React from "react";
 import {
   FormComponentType,
   Components,
@@ -5,6 +6,9 @@ import {
   SerializedForm,
   SerializedComponent,
 } from "@fab4m/fab4m";
+import { createBrowserRouter } from "react-router-dom";
+import { FormBuilder } from "./components/FormBuilder";
+import { routes } from "./router";
 
 export interface Plugin<SettingsType> {
   editForm?: Components<SettingsType>;
@@ -31,6 +35,11 @@ export interface FormStorage {
 export interface Plugins {
   types: FormComponentTypePlugin[];
   widgets: WidgetTypePlugin[];
+}
+
+export function formBuilder(plugins: Plugins, storage: FormStorage) {
+  const router = createBrowserRouter(routes({ plugins, storage }));
+  return <FormBuilder router={router} />;
 }
 
 export * from "./components/FormBuilder";

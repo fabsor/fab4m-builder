@@ -1,6 +1,6 @@
 import { SerializedComponent, SerializedForm } from "@fab4m/fab4m";
 import invariant from "tiny-invariant";
-import { Plugin } from ".";
+import { Plugin, WidgetTypePlugin } from ".";
 import { produce } from "immer";
 
 export function invariantReturn<Type>(data: Type | undefined | null): Type {
@@ -21,6 +21,15 @@ export function findComponent(
 ): SerializedComponent {
   const component = form.components.find((c) => c.name === name);
   return invariantReturn(component);
+}
+
+export function findComponentWidgets(
+  type: string,
+  widgets: WidgetTypePlugin[]
+) {
+  return widgets.filter(
+    (widget) => widget.type.components.indexOf(type) !== -1
+  );
 }
 
 export function updateComponent(
