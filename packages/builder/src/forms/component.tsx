@@ -43,9 +43,11 @@ export function componentForm(
   }
   return createForm<ComponentData>({
     label: textField({
+      required: true,
       label: "Label",
     }),
     name: textField({
+      required: true,
       label: "Name",
     }),
     description: textAreaField({
@@ -53,6 +55,7 @@ export function componentForm(
     }),
     widget: textField({
       label: "Widget",
+      required: true,
       widget: selectWidget(
         findComponentWidgets(type.type.name, plugins.widgets).map((widget) => [
           widget.type.title,
