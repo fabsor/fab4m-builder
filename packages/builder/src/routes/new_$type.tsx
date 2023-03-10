@@ -4,11 +4,19 @@ import {
   selectWidget,
   textAreaField,
   textField,
+  fromFormData,
   useForm,
+  FormComponentWithName,
+  serializeComponent,
 } from "@fab4m/fab4m";
 import React, { useState } from "react";
-import { useOutletContext, useParams } from "react-router-dom";
-import { FormComponentTypePlugin, WidgetTypePlugin } from "src";
+import {
+  ActionFunction,
+  redirect,
+  useOutletContext,
+  useParams,
+} from "react-router-dom";
+import { FormStorage, FormComponentTypePlugin, WidgetTypePlugin } from "../";
 import { FormBuilderContext } from "../components/FormBuilder";
 import invariant from "tiny-invariant";
 import { findPlugin } from "../util";
@@ -17,9 +25,37 @@ import { FormRoute } from "@fab4m/routerforms";
 interface ComponentData {
   label: string;
   name: string;
+  required: boolean;
+  description?: string;
   settings?: Record<string, unknown>;
   widget: string;
   widgetSettings?: Record<string, unknown>;
+}
+
+export function action(
+  context: FormBuilderContext,
+  actions: FormStorage
+): ActionFunction {
+  return async ({ params, request }) => {
+    const type = findPlugin(params.type ?? "", context.plugins.types);
+    const formData = await request.formData();
+    const widgetName = formData.get("widget")?.toString();
+    const widget = findPlugin(widgetName ?? "", context.plugins.widgets);
+    invariant(widget.type.init);
+    const form = newForm(type, widget);
+    const data = fromFormData<ComponentData>(form, formData);
+    await actions.addComponent(
+      serializeComponent({
+        ...data,
+        type: type.type,
+        widget: widget.type.init(),
+        validators: [],
+        rules: [],
+        settings: undefined,
+      })
+    );
+    return redirect("../..");
+  };
 }
 
 function newForm(type: FormComponentTypePlugin, widget?: WidgetTypePlugin) {
@@ -41,7 +77,7 @@ function newForm(type: FormComponentTypePlugin, widget?: WidgetTypePlugin) {
       widget.editForm
     );
   }
-  return createForm({
+  return createForm<ComponentData>({
     label: textField({
       label: "Label",
     }),
@@ -73,7 +109,7 @@ export function NewComponentType() {
   ).onDataChange(changeData);
   return (
     <section>
-      <FormRoute form={form} data={data} />
+      <FormRoute form={form} data={data} useRouteAction={true} />
     </section>
   );
 }

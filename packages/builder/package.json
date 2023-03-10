@@ -31,6 +31,7 @@
     "url": "https://github.com/fab4m-forms/fab4m/issues"
   },
   "dependencies": {
+    "immer": "^9.0.19",
     "tiny-invariant": "^1.3.1"
   }
 }

@@ -1,4 +1,10 @@
-import { FormComponentType, Components, WidgetType } from "@fab4m/fab4m";
+import {
+  FormComponentType,
+  Components,
+  WidgetType,
+  SerializedForm,
+  SerializedComponent,
+} from "@fab4m/fab4m";
 
 export interface Plugin<SettingsType> {
   editForm?: Components<SettingsType>;
@@ -13,6 +19,13 @@ export interface FormComponentTypePlugin<SettingsType = never>
 export interface WidgetTypePlugin<SettingsType = never>
   extends Plugin<SettingsType> {
   type: WidgetType;
+}
+
+export interface FormStorage {
+  loadForm: () => Promise<SerializedForm>;
+  addComponent: (newComponent: SerializedComponent) => Promise<void>;
+  editComponent: (component: SerializedComponent) => Promise<void>;
+  saveForm: (form: SerializedForm) => Promise<SerializedForm>;
 }
 
 export interface Plugins {
