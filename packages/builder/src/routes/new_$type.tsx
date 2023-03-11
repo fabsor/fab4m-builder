@@ -10,30 +10,24 @@ import invariant from "tiny-invariant";
 import { findPlugin } from "../util";
 import { FormRoute } from "@fab4m/routerforms";
 import { ActionCreatorArgs, FormBuilderContext } from "../router";
-import { ComponentData, componentForm } from "../forms/component";
+import {
+  ComponentData,
+  componentForm,
+  componentFromFormData,
+} from "../forms/component";
 
 export function action({
   plugins,
   storage,
 }: ActionCreatorArgs): ActionFunction {
   return async ({ params, request }) => {
-    const type = findPlugin(params.type ?? "", plugins.types);
-    const formData = await request.formData();
-    const widgetName = formData.get("widget")?.toString();
-    const widget = findPlugin(widgetName ?? "", plugins.widgets);
-    invariant(widget.type.init);
-    const form = componentForm(type, plugins, widget);
-    const data = fromFormData(form, formData);
-    await storage.addComponent(
-      serializeComponent({
-        ...data,
-        type: type.type,
-        widget: widget.type.init(),
-        validators: [],
-        rules: [],
-        settings: undefined,
-      })
+    invariant(params.type);
+    const component = await componentFromFormData(
+      params.type,
+      plugins,
+      request
     );
+    await storage.addComponent(component);
     return redirect("../..");
   };
 }

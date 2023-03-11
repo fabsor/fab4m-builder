@@ -5,6 +5,7 @@ import {
   WidgetType,
   SerializedForm,
   SerializedComponent,
+  ValidatorType,
 } from "@fab4m/fab4m";
 import { createBrowserRouter } from "react-router-dom";
 import { FormBuilder } from "./components/FormBuilder";
@@ -25,6 +26,11 @@ export interface WidgetTypePlugin<SettingsType = never>
   type: WidgetType;
 }
 
+export interface ValidatorTypePlugin<SettingsType = never>
+  extends Plugin<SettingsType> {
+  type: ValidatorType;
+}
+
 export interface FormStorage {
   loadForm: () => Promise<SerializedForm>;
   addComponent: (newComponent: SerializedComponent) => Promise<void>;
@@ -35,6 +41,7 @@ export interface FormStorage {
 export interface Plugins {
   types: FormComponentTypePlugin[];
   widgets: WidgetTypePlugin[];
+  validators: ValidatorTypePlugin[];
 }
 
 export function formBuilder(plugins: Plugins, storage: FormStorage) {

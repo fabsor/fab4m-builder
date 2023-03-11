@@ -12,7 +12,7 @@ import {
   SerializedComponent,
   serializeWidget,
 } from "@fab4m/fab4m";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActionFunction,
   redirect,
@@ -28,7 +28,7 @@ import {
 import invariant from "tiny-invariant";
 import { findComponent, findPlugin, invariantReturn } from "../util";
 import { FormRoute } from "@fab4m/routerforms";
-import { componentForm } from "../forms/component";
+import { componentForm, componentFromFormData } from "../forms/component";
 
 interface ComponentData {
   label: string;
@@ -50,44 +50,30 @@ export function action({
       currentForm,
       invariantReturn(params.component)
     );
-    const plugin = findPlugin<FormComponentTypePlugin>(
+    const component = await componentFromFormData(
       currentComponent.type,
-      plugins.types
+      plugins,
+      request
     );
-    const formData = await request.formData();
-    const widgetName = formData.get("widget")?.toString();
-    const widgetPlugin = findPlugin<WidgetTypePlugin>(
-      widgetName ?? "",
-      plugins.widgets
-    );
-    const form = componentForm(plugin, plugins, widgetPlugin);
-    const data = fromFormData<ComponentData>(form, formData);
-    invariant(widgetPlugin.type.init);
-    const widget =
-      widgetPlugin.type.name != currentComponent.widget.type
-        ? serializeWidget(widgetPlugin.type.init())
-        : currentComponent.widget;
-    await storage.editComponent({
-      ...currentComponent,
-      ...data,
-      type: currentComponent.type,
-      widget: widget,
-    });
+    await storage.editComponent(component);
     return redirect("../..");
   };
 }
 
-export default function NewComponentType() {
+export default function EditComponent() {
   const context = useOutletContext<FormBuilderContext>();
   const { plugin, component } = useComponentInfo();
-  const [data, changeData] = useState<Partial<ComponentData>>({
-    label: component.label,
-    name: component.name,
-    required: component.required,
-    description: component.description,
-    widget: component.widget.type,
-    widgetSettings: component.widget.settings as Record<string, unknown>,
-  });
+  const [data, changeData] = useState<Partial<ComponentData>>({});
+  useEffect(() => {
+    changeData({
+      label: component.label,
+      name: component.name,
+      required: component.required,
+      description: component.description,
+      widget: component.widget.type,
+      widgetSettings: component.widget.settings as Record<string, unknown>,
+    });
+  }, [component]);
   const widgetType = data.widget
     ? findPlugin<WidgetTypePlugin>(data.widget, context.plugins.widgets)
     : undefined;
