@@ -5,6 +5,7 @@ import * as root from "./routes";
 import * as EditComponent from "./routes/edit_$component";
 import * as NewComponentType from "./routes/new_$type";
 import NewComponent from "./routes/new";
+import * as NewValidator from "./routes/edit_$component_new_validator";
 
 export interface RouteArgs {
   plugins: Plugins;
@@ -30,6 +31,13 @@ export function routes(args: RouteArgs): RouteObject[] {
           path: "edit/:component",
           action: EditComponent.action(args),
           element: <EditComponent.default />,
+          children: [
+            {
+              index: true,
+              action: NewValidator.action(args),
+              element: <NewValidator.default />,
+            },
+          ],
         },
         {
           path: "new",

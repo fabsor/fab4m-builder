@@ -3,5 +3,5 @@ export const translations = {
 };
 
 export default function t(translation: keyof typeof translations) {
-  return translations[translation];
+  return translations[translation] ?? translation;
 }

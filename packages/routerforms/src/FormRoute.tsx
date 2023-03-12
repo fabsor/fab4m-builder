@@ -84,6 +84,7 @@ export default function FormRoute(props: FormRouteProps): JSX.Element | null {
         theme={props.form.theme}
         part={part}
         form={props.form}
+        hideSubmit={props.hideSubmit}
         hasNextPart={getNextPart(parts, part, data) !== -1}
         hasPrevPart={prevPart !== -1}
         goBack={() => {}}

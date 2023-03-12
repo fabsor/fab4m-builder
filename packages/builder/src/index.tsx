@@ -12,7 +12,7 @@ import { FormBuilder } from "./components/FormBuilder";
 import { routes } from "./router";
 
 export interface Plugin<SettingsType> {
-  editForm?: Components<SettingsType>;
+  editForm?: Components<unknown>;
   settingsFromForm?: (data: Record<string, unknown>) => SettingsType;
 }
 

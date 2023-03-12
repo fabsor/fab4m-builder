@@ -1,5 +1,6 @@
 import {
   createForm,
+  detailsWidget,
   fromFormData,
   group,
   selectWidget,
@@ -8,9 +9,14 @@ import {
   textAreaField,
   textField,
 } from "@fab4m/fab4m";
-import { findComponentWidgets, findPlugin } from "../util";
+import {
+  findComponentValidators,
+  findComponentWidgets,
+  findPlugin,
+} from "../util";
 import { FormComponentTypePlugin, Plugins, WidgetTypePlugin } from "..";
 import invariant from "tiny-invariant";
+import t from "../translations";
 
 export interface ComponentData {
   label: string;
@@ -70,6 +76,7 @@ export function componentForm(
       widget.editForm
     );
   }
+
   return createForm<ComponentData>({
     label: textField({
       required: true,

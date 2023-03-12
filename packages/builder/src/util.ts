@@ -1,6 +1,6 @@
 import { SerializedComponent, SerializedForm } from "@fab4m/fab4m";
 import invariant from "tiny-invariant";
-import { Plugin, WidgetTypePlugin } from ".";
+import { Plugin, ValidatorTypePlugin, WidgetTypePlugin } from ".";
 import { produce } from "immer";
 
 export function invariantReturn<Type>(data: Type | undefined | null): Type {
@@ -29,6 +29,15 @@ export function findComponentWidgets(
 ) {
   return widgets.filter(
     (widget) => widget.type.components.indexOf(type) !== -1
+  );
+}
+
+export function findComponentValidators(
+  type: string,
+  validators: ValidatorTypePlugin[]
+) {
+  return validators.filter(
+    (validator) => validator.type.components.indexOf(type) !== -1
   );
 }
 

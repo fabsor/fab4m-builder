@@ -1,34 +1,19 @@
-import {
-  createForm,
-  group,
-  selectWidget,
-  textAreaField,
-  textField,
-  fromFormData,
-  useForm,
-  FormComponentWithName,
-  serializeComponent,
-  SerializedForm,
-  SerializedComponent,
-  serializeWidget,
-} from "@fab4m/fab4m";
+import { useForm, SerializedForm, SerializedComponent } from "@fab4m/fab4m";
 import React, { useEffect, useState } from "react";
 import {
   ActionFunction,
+  Outlet,
   redirect,
   useOutletContext,
   useParams,
   useRouteLoaderData,
 } from "react-router-dom";
-import { FormComponentTypePlugin, FormStorage, WidgetTypePlugin } from "../";
-import {
-  ActionCreatorArgs,
-  FormBuilderContext,
-} from "../components/FormBuilder";
+import { FormComponentTypePlugin, WidgetTypePlugin } from "../";
 import invariant from "tiny-invariant";
 import { findComponent, findPlugin, invariantReturn } from "../util";
 import { FormRoute } from "@fab4m/routerforms";
 import { componentForm, componentFromFormData } from "../forms/component";
+import { ActionCreatorArgs, FormBuilderContext } from "src/router";
 
 interface ComponentData {
   label: string;
@@ -60,10 +45,20 @@ export function action({
   };
 }
 
+export interface ComponentContext extends FormBuilderContext {
+  plugin: FormComponentTypePlugin;
+  component: SerializedComponent;
+}
+
 export default function EditComponent() {
   const context = useOutletContext<FormBuilderContext>();
   const { plugin, component } = useComponentInfo();
   const [data, changeData] = useState<Partial<ComponentData>>({});
+  const componentContext: ComponentContext = {
+    ...context,
+    plugin,
+    component,
+  };
   useEffect(() => {
     changeData({
       label: component.label,
@@ -77,13 +72,20 @@ export default function EditComponent() {
   const widgetType = data.widget
     ? findPlugin<WidgetTypePlugin>(data.widget, context.plugins.widgets)
     : undefined;
+
   const form = useForm(
     () => componentForm(plugin, context.plugins, widgetType),
     [plugin, widgetType]
   ).onDataChange(changeData);
   return (
     <section>
-      <FormRoute form={form} data={data} useRouteAction={true} />
+      <FormRoute
+        form={form}
+        data={data}
+        useRouteAction={true}
+        hideSubmit={true}
+      />
+      <Outlet context={componentContext} />
     </section>
   );
 }
