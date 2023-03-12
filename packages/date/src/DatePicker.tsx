@@ -51,6 +51,9 @@ export function DatePicker(
           />
           <ReactDatePicker
             {...props.attributes}
+            {...(typeof props.settings.datePickerProps === "function"
+              ? props.settings.datePickerProps(props.value)
+              : props.settings.datePickerProps)}
             id={pickerId}
             dateFormat={dateFormat(props.settings, props.withTime)}
             locale={locale?.locale}
