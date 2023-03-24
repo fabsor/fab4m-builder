@@ -2,6 +2,7 @@ import * as React from "react";
 import { componentErrors, FormDataContext } from "../../form";
 import FormComponentView from "../../components/FormComponentView";
 import { WidgetProps } from "../../widget";
+import { filterComponents } from "../../rule";
 /**
  * Helper react component to render children of a component.
  * @group React Widget API
@@ -22,7 +23,7 @@ export default function GroupChildren(
     });
   };
   const children = props.component.components.map((component, index) => {
-    if (!component.name) {
+    if (Array.isArray(component) || !component.name) {
       return null;
     }
     const renderedComponent = (
