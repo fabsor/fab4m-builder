@@ -37,7 +37,9 @@ export function findComponentValidators(
   validators: ValidatorTypePlugin[]
 ) {
   return validators.filter(
-    (validator) => validator.type.components.indexOf(type) !== -1
+    (validator) =>
+      !validator.type.components ||
+      validator.type.components.indexOf(type) !== -1
   );
 }
 

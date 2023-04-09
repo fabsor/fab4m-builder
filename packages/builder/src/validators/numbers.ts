@@ -9,5 +9,8 @@ export const minValidatorPlugin: ValidatorTypePlugin<number> = {
       required: true,
     }),
   },
+  formData: (settings: number) => ({
+    min: settings,
+  }),
   settingsFromForm: (data) => data.min as number,
 };

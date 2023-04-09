@@ -14,6 +14,7 @@ import { routes } from "./router";
 export interface Plugin<SettingsType> {
   editForm?: Components<unknown>;
   settingsFromForm?: (data: Record<string, unknown>) => SettingsType;
+  formData?: (settings: SettingsType) => Record<string, unknown>;
 }
 
 export interface FormComponentTypePlugin<SettingsType = never>
@@ -26,7 +27,7 @@ export interface WidgetTypePlugin<SettingsType = never>
   type: WidgetType;
 }
 
-export interface ValidatorTypePlugin<SettingsType = never>
+export interface ValidatorTypePlugin<SettingsType = unknown>
   extends Plugin<SettingsType> {
   type: ValidatorType;
 }

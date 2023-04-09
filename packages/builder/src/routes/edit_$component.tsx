@@ -1,4 +1,9 @@
-import { useForm, SerializedForm, SerializedComponent } from "@fab4m/fab4m";
+import {
+  useForm,
+  SerializedForm,
+  SerializedComponent,
+  StatefulFormView,
+} from "@fab4m/fab4m";
 import React, { useEffect, useState } from "react";
 import {
   ActionFunction,
@@ -8,12 +13,13 @@ import {
   useParams,
   useRouteLoaderData,
 } from "react-router-dom";
-import { FormComponentTypePlugin, WidgetTypePlugin } from "../";
+import { FormComponentTypePlugin, ValidatorTypePlugin } from "../";
 import invariant from "tiny-invariant";
 import { findComponent, findPlugin, invariantReturn } from "../util";
 import { FormRoute } from "@fab4m/routerforms";
 import { componentForm, componentFromFormData } from "../forms/component";
 import { ActionCreatorArgs, FormBuilderContext } from "src/router";
+import t from "../translations";
 
 interface ComponentData {
   label: string;
@@ -22,6 +28,7 @@ interface ComponentData {
   description?: string;
   settings?: Record<string, unknown>;
   widget: string;
+  validators: Array<Record<string, unknown>>;
   widgetSettings?: Record<string, unknown>;
 }
 
@@ -66,16 +73,21 @@ export default function EditComponent() {
       required: component.required,
       description: component.description,
       widget: component.widget.type,
+      validators: component.validators.map((validator) => {
+        const plugin = findPlugin(validator.type, context.plugins.validators);
+        return {
+          type: validator.type,
+          settings: plugin.formData
+            ? plugin.formData(validator.settings)
+            : undefined,
+        };
+      }),
       widgetSettings: component.widget.settings as Record<string, unknown>,
     });
   }, [component]);
-  const widgetType = data.widget
-    ? findPlugin<WidgetTypePlugin>(data.widget, context.plugins.widgets)
-    : undefined;
-
   const form = useForm(
-    () => componentForm(plugin, context.plugins, widgetType),
-    [plugin, widgetType]
+    () => componentForm(plugin, context.plugins),
+    [plugin]
   ).onDataChange(changeData);
   return (
     <section>
@@ -85,6 +97,7 @@ export default function EditComponent() {
         useRouteAction={true}
         hideSubmit={true}
       />
+      <h2>{t("validators")}</h2>
       <Outlet context={componentContext} />
     </section>
   );

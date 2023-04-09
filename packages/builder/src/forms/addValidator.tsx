@@ -5,42 +5,87 @@ import {
   selectWidget,
   textField,
   SerializedValidator,
+  equals,
+  Validator,
+  detailsWidget,
 } from "@fab4m/fab4m";
 import { Plugins, ValidatorTypePlugin } from "..";
-import { findComponentValidators, findPlugin, invariantReturn } from "../util";
+import {
+  findComponent,
+  findComponentValidators,
+  findPlugin,
+  invariantReturn,
+} from "../util";
 import t from "../translations";
+import invariant from "tiny-invariant";
+import { ActionCreatorArgs } from "../router";
+import { ActionFunction, redirect } from "react-router-dom";
 
-export function validatorForm(
+export function action({
+  plugins,
+  storage,
+}: ActionCreatorArgs): ActionFunction {
+  return async ({ params, request }) => {
+    const currentForm = await storage.loadForm();
+    const currentComponent = findComponent(
+      currentForm,
+      invariantReturn(params.component)
+    );
+    const validator = await validatorFromFormData(
+      currentComponent.type,
+      plugins,
+      request
+    );
+    await storage.editComponent({
+      ...currentComponent,
+      validators: [...currentComponent.validators, validator],
+    });
+    return redirect("../..");
+  };
+}
+export function newValidatorForm(
   componentType: string,
-  validatorPlugins: ValidatorTypePlugin[],
-  validator?: string
+  validatorPlugins: ValidatorTypePlugin[]
 ) {
-  let settings;
   const plugins = findComponentValidators(componentType, validatorPlugins);
-  if (validator) {
-    const plugin = findPlugin<ValidatorTypePlugin>(validator, plugins);
-    if (plugin.editForm) {
-      settings = group(
-        {
-          label: t("settings"),
-        },
-        plugin.editForm
-      );
-    }
-  }
-  return createForm(
-    {
-      validator: textField({
-        label: t("validator"),
-        required: true,
-        widget: selectWidget(
-          plugins.map((plugin) => [plugin.type.title, plugin.type.name])
+  const settings = plugins
+    .filter((plugin) => plugin.editForm)
+    .map((plugin) => {
+      invariant(plugin.editForm);
+      return [
+        "validators.$.validator",
+        equals(plugin.type.name),
+        group(
+          {
+            label: plugin.type.title,
+          },
+          plugin.editForm
         ),
-      }),
-      settings,
+      ];
+    });
+  const form = createForm(
+    {
+      validators: group(
+        {
+          label: t("validators"),
+          multiple: true,
+        },
+        {
+          validator: textField({
+            label: t("validator"),
+            required: true,
+            widget: selectWidget(
+              plugins.map((plugin) => [plugin.type.title, plugin.type.name])
+            ),
+          }),
+          settings: settings,
+        }
+      ),
     },
     { description: "What a form", labels: { submit: "Add validator" } }
   );
+  console.log(form);
+  return form;
 }
 
 export async function validatorFromFormData(
@@ -50,13 +95,12 @@ export async function validatorFromFormData(
 ): Promise<SerializedValidator> {
   const plugin = findPlugin(fieldType, plugins.types);
   const formData = await request.formData();
-  const validatorName = invariantReturn(formData.get("validator")?.toString());
   const data = fromFormData(
-    validatorForm(fieldType, plugins.validators, validatorName),
+    newValidatorForm(fieldType, plugins.validators),
     formData
   );
   return {
-    type: plugin.type.name,
+    type: data.validator,
     settings: plugin.settingsFromForm
       ? plugin.settingsFromForm(data)
       : undefined,

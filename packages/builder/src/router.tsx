@@ -31,13 +31,6 @@ export function routes(args: RouteArgs): RouteObject[] {
           path: "edit/:component",
           action: EditComponent.action(args),
           element: <EditComponent.default />,
-          children: [
-            {
-              index: true,
-              action: NewValidator.action(args),
-              element: <NewValidator.default />,
-            },
-          ],
         },
         {
           path: "new",
