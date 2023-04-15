@@ -28,6 +28,11 @@ export interface ComponentData {
   settings?: Record<string, unknown>;
   widget: string;
   validators: Array<{ type: string; settings: Record<string, unknown> }>;
+  rules: Array<{
+    component: string;
+    rule: string;
+    settings: Record<string, unknown>;
+  }>;
   widgetSettings?: Record<string, unknown>;
 }
 
@@ -62,6 +67,18 @@ export async function componentFromFormData(
         ? plugin.settingsFromForm(validator.settings)
         : undefined,
     };
+  });
+  serializedComponent.rules = data.rules.map((rule) => {
+    const plugin = findPlugin(rule.rule, plugins.validators);
+    return [
+      rule.component,
+      {
+        type: plugin.type.name,
+        settings: plugin.settingsFromForm
+          ? plugin.settingsFromForm(rule.settings)
+          : undefined,
+      },
+    ];
   });
   return serializedComponent;
 }

@@ -24,6 +24,11 @@ interface ComponentData {
   settings?: Record<string, unknown>;
   widget: string;
   validators: Array<Record<string, unknown>>;
+  rules: Array<{
+    component: string;
+    rule: string;
+    settings?: Record<string, unknown>;
+  }>;
   widgetSettings?: Record<string, unknown>;
 }
 
@@ -75,6 +80,19 @@ export default function EditComponent() {
           type: validator.type,
           settings: plugin.formData
             ? plugin.formData(validator.settings)
+            : undefined,
+        };
+      }),
+      rules: component.rules.map((rule) => {
+        if (!Array.isArray(rule)) {
+          throw new Error("Unexpected rule");
+        }
+        const plugin = findPlugin(rule[1].type, context.plugins.validators);
+        return {
+          component: rule[0],
+          rule: rule[1].type,
+          settings: plugin.formData
+            ? plugin.formData(rule[1].settings)
             : undefined,
         };
       }),
