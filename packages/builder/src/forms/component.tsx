@@ -1,8 +1,11 @@
 import {
+  booleanField,
   createForm,
   equals,
+  exists,
   fromFormData,
   group,
+  integerField,
   selectWidget,
   serializeComponent,
   SerializedComponent,
@@ -127,14 +130,28 @@ export function componentForm(
   return createForm<ComponentData>({
     label: textField({
       required: true,
-      label: "Label",
+      label: t("label"),
     }),
     name: textField({
       required: true,
-      label: "Name",
+      label: t("name"),
+    }),
+    required: booleanField({
+      label: t("required"),
     }),
     description: textAreaField({
-      label: "Description",
+      label: t("description"),
+    }),
+    multiple: booleanField({
+      label: t("multiple"),
+    }),
+    minItems: integerField({
+      label: t("minItems"),
+      rules: [["multiple", exists()]],
+    }),
+    maxItems: integerField({
+      label: t("maxItems"),
+      rules: [["multiple", exists()]],
     }),
     settings: settingsForm ?? undefined,
     widget: textField({
