@@ -17,12 +17,12 @@ export interface Plugin<SettingsType> {
   formData?: (settings: SettingsType) => Record<string, unknown>;
 }
 
-export interface FormComponentTypePlugin<SettingsType = never>
+export interface FormComponentTypePlugin<SettingsType = unknown>
   extends Plugin<SettingsType> {
   type: FormComponentType;
 }
 
-export interface WidgetTypePlugin<SettingsType = never>
+export interface WidgetTypePlugin<SettingsType = unknown>
   extends Plugin<SettingsType> {
   type: WidgetType;
 }

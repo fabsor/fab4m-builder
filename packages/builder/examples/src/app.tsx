@@ -21,6 +21,7 @@ import {
   numberFieldWidgetPlugin,
 } from "../../src/types/number";
 import { minValidatorPlugin } from "../../src/validators/numbers";
+import { existsValidatorPlugin } from "../../src/validators/exists";
 import "@fab4m/fab4m/css/basic/basic.css";
 import { localFormStorage } from "../../src/localstorage";
 
@@ -32,7 +33,7 @@ const FormBuilder = formBuilder(
   {
     types: [textFieldPlugin, integerFieldPlugin, floatFieldPlugin],
     widgets: [textFieldWidgetPlugin, numberFieldWidgetPlugin],
-    validators: [minValidatorPlugin],
+    validators: [minValidatorPlugin, existsValidatorPlugin],
   },
   localFormStorage("form", serialize(form))
 );

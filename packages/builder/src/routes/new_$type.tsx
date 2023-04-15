@@ -1,10 +1,11 @@
-import { fromFormData, useForm, serializeComponent } from "@fab4m/fab4m";
+import { useForm, SerializedForm } from "@fab4m/fab4m";
 import React, { useState } from "react";
 import {
   ActionFunction,
   redirect,
   useOutletContext,
   useParams,
+  useRouteLoaderData,
 } from "react-router-dom";
 import invariant from "tiny-invariant";
 import { findPlugin } from "../util";
@@ -25,7 +26,8 @@ export function action({
     const component = await componentFromFormData(
       params.type,
       plugins,
-      request
+      request,
+      await storage.loadForm()
     );
     await storage.addComponent(component);
     return redirect("../..");
@@ -33,6 +35,7 @@ export function action({
 }
 
 export function NewComponentType() {
+  const formData = useRouteLoaderData("root") as SerializedForm;
   const context = useOutletContext<FormBuilderContext>();
   const type = useComponentType();
   const [data, changeData] = useState<Partial<ComponentData>>({});
@@ -40,7 +43,7 @@ export function NewComponentType() {
     ? findPlugin(data.widget, context.plugins.widgets)
     : undefined;
   const form = useForm(
-    () => componentForm(type, context.plugins, widgetType),
+    () => componentForm(type, context.plugins, formData),
     [type, widgetType]
   ).onDataChange(changeData);
   return <FormRoute form={form} data={data} useRouteAction={true} />;

@@ -1,9 +1,4 @@
-import {
-  useForm,
-  SerializedForm,
-  SerializedComponent,
-  StatefulFormView,
-} from "@fab4m/fab4m";
+import { useForm, SerializedForm, SerializedComponent } from "@fab4m/fab4m";
 import React, { useEffect, useState } from "react";
 import {
   ActionFunction,
@@ -13,7 +8,7 @@ import {
   useParams,
   useRouteLoaderData,
 } from "react-router-dom";
-import { FormComponentTypePlugin, ValidatorTypePlugin } from "../";
+import { FormComponentTypePlugin } from "../";
 import invariant from "tiny-invariant";
 import { findComponent, findPlugin, invariantReturn } from "../util";
 import { FormRoute } from "@fab4m/routerforms";
@@ -45,7 +40,8 @@ export function action({
     const component = await componentFromFormData(
       currentComponent.type,
       plugins,
-      request
+      request,
+      currentForm
     );
     await storage.editComponent(component);
     return redirect("../..");
@@ -59,7 +55,7 @@ export interface ComponentContext extends FormBuilderContext {
 
 export default function EditComponent() {
   const context = useOutletContext<FormBuilderContext>();
-  const { plugin, component } = useComponentInfo();
+  const { plugin, component, currentForm } = useComponentInfo();
   const [data, changeData] = useState<Partial<ComponentData>>({});
   const componentContext: ComponentContext = {
     ...context,
@@ -86,7 +82,7 @@ export default function EditComponent() {
     });
   }, [component]);
   const form = useForm(
-    () => componentForm(plugin, context.plugins),
+    () => componentForm(plugin, context.plugins, currentForm, component),
     [plugin]
   ).onDataChange(changeData);
   return (
@@ -113,5 +109,9 @@ function useComponentInfo() {
     component.type,
     context.plugins.types
   );
-  return { plugin, component };
+  return {
+    plugin,
+    component,
+    currentForm: form,
+  };
 }
