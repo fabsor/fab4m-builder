@@ -31,7 +31,7 @@ export default function FormBuilder(props: { plugins: Plugins }) {
       </section>
       <section className="col-span-2">
         <h2>Preview</h2>
-        {/*<StatefulFormView form={unserializeForm(form, props.plugins)} />*/}
+        <StatefulFormView form={unserializeForm(form, props.plugins)} />
       </section>
     </main>
   );

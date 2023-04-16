@@ -34,7 +34,7 @@ export default function NumberField(
   };
 
   return (
-    <FormComponentWrapper {...props} prefix={props.settings.prefix}>
+    <FormComponentWrapper {...props} prefix={props.settings?.prefix}>
       <input
         className={classes.input}
         required={component.required}
