@@ -39,9 +39,5 @@ const FormBuilder = formBuilder(
 );
 
 export default function App() {
-  return (
-    <div style={{ maxWidth: "900px", padding: "1em", margin: "0 auto" }}>
-      {FormBuilder}
-    </div>
-  );
+  return <div className="container mx-auto">{FormBuilder}</div>;
 }

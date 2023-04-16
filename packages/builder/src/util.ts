@@ -1,6 +1,11 @@
-import { SerializedComponent, SerializedForm } from "@fab4m/fab4m";
+import {
+  basic,
+  SerializedComponent,
+  SerializedForm,
+  unserialize,
+} from "@fab4m/fab4m";
 import invariant from "tiny-invariant";
-import { Plugin, ValidatorTypePlugin, WidgetTypePlugin } from ".";
+import { Plugin, Plugins, ValidatorTypePlugin, WidgetTypePlugin } from ".";
 import { produce } from "immer";
 
 export function invariantReturn<Type>(data: Type | undefined | null): Type {
@@ -48,9 +53,22 @@ export function updateComponent(
   component: SerializedComponent
 ): SerializedForm {
   return produce(form, (draft) => {
-    const index = draft.components.findIndex((c) => c.name === component.name);
+    const index = draft.components.findIndex(
+      (c) => !Array.isArray(c) && c.name === component.name
+    );
     if (index !== -1) {
       draft.components[index] = component;
     }
   });
+}
+
+export function unserializeForm(form: SerializedForm, plugins: Plugins) {
+  return unserialize(
+    form,
+    plugins.types.map((p) => p.type),
+    [basic],
+    plugins.widgets.map((w) => w.type),
+    [],
+    plugins.validators.map((v) => v.type)
+  );
 }
