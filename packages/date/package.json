@@ -1,18 +1,17 @@
 {
   "name": "@fab4m/date",
-  "version": "1.0.0-beta10",
+  "version": "1.0.0-beta11",
   "description": "Date components for fab4m",
   "author": "Fabian Sorqvist <fabian@sorqvist.nu>",
   "homepage": "",
   "license": "MIT",
   "module": "dist/index.es.js",
   "main": "dist/index.cjs.js",
-    "types": "dist/index.d.ts",
-"publishConfig": {
-  "access": "public",
-  "registry": "https://registry.npmjs.org/"
-},
-
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "directories": {
     "lib": "dist",
     "test": "test"
