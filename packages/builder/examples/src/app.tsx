@@ -39,5 +39,5 @@ const FormBuilder = formBuilder(
 );
 
 export default function App() {
-  return <div className="container mx-auto">{FormBuilder}</div>;
+  return <div>{FormBuilder}</div>;
 }

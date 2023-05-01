@@ -6,6 +6,7 @@ import * as EditComponent from "./routes/edit_$component";
 import * as NewComponentType from "./routes/new_$type";
 import NewComponent from "./routes/new";
 import * as NewValidator from "./routes/edit_$component_new_validator";
+import Overlay from "./components/Overlay";
 
 export interface RouteArgs {
   plugins: Plugins;
@@ -20,6 +21,7 @@ export function routes(args: RouteArgs): RouteObject[] {
     {
       path: "/",
       loader: root.loader(args),
+      action: root.action(args),
       id: "root",
       element: <root.default plugins={args.plugins} />,
       children: [
@@ -28,18 +30,23 @@ export function routes(args: RouteArgs): RouteObject[] {
           element: <Link to="new">New component</Link>,
         },
         {
-          path: "edit/:component",
-          action: EditComponent.action(args),
-          element: <EditComponent.default />,
-        },
-        {
-          path: "new",
-          element: <NewComponent />,
-        },
-        {
-          path: "new/:type",
-          action: NewComponentType.action(args),
-          element: <NewComponentType.NewComponentType />,
+          element: <Overlay />,
+          children: [
+            {
+              path: "edit/:component",
+              action: EditComponent.action(args),
+              element: <EditComponent.default />,
+            },
+            {
+              path: "new",
+              element: <NewComponent />,
+            },
+            {
+              path: "new/:type",
+              action: NewComponentType.action(args),
+              element: <NewComponentType.NewComponentType />,
+            },
+          ],
         },
       ],
     },
