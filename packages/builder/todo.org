@@ -1,0 +1,35 @@
+* TODO
+** TODO Dragndrop
+** Skip overlay
+** Adding new component: Icons
+** Rule groups
+** Machine name
+** Components
+*** Content
+*** Email
+*** File upload
+*** Float
+*** Date
+*** Groups
+*** Page break
+*** URL
+*** Date
+*** Password
+** Widgets
+*** Details
+*** Fieldset
+*** Horizontal group
+*** Radios
+*** Select
+*** Text area
+*** Autocomplete
+** Validators
+*** Allowed values
+*** Disallowed values
+*** Equals
+*** Exists
+*** File extensions
+*** Max file size
+*** maximal length
+*** Min value
+*** minimal length
