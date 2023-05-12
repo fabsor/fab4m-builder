@@ -10,6 +10,7 @@ import {
   serializeComponent,
   SerializedComponent,
   SerializedForm,
+  tailwind,
   textAreaField,
   textField,
   VariantDefinition,
@@ -127,119 +128,121 @@ export function componentForm(
         ),
       ];
     });
-  return createForm<ComponentData>({
-    label: textField({
-      required: true,
-      label: t("label"),
-    }),
-    name: textField({
-      required: true,
-      label: t("name"),
-    }),
-    required: booleanField({
-      label: t("required"),
-    }),
-    description: textAreaField({
-      label: t("description"),
-    }),
-    multiple: booleanField({
-      label: t("multiple"),
-    }),
-    minItems: integerField({
-      label: t("minItems"),
-      rules: [["multiple", exists()]],
-    }),
-    maxItems: integerField({
-      label: t("maxItems"),
-      rules: [["multiple", exists()]],
-    }),
-    settings: settingsForm ?? undefined,
-    widget: textField({
-      label: "Widget",
-      required: true,
-      widget: selectWidget(
-        findComponentWidgets(type.type.name, plugins.widgets).map((widget) => [
-          widget.type.title,
-          widget.type.name,
-        ])
-      ),
-    }),
-    widgetSettings: widgetSettingsForm,
-    validators: group(
-      {
-        label: t("validators"),
-        multiple: true,
-      },
-      {
-        type: textField({
-          label: t("validator"),
-          required: true,
-          widget: selectWidget(
-            findComponentValidators(type.type.name, plugins.validators).map(
-              (plugin) => [plugin.type.title, plugin.type.name]
-            )
-          ),
-        }),
-        settings: plugins.validators
-          .filter((plugin) => plugin.editForm)
-          .map((plugin) => {
-            invariant(plugin.editForm);
-            return [
-              "validators.$.type",
-              equals(plugin.type.name),
-              group(
-                {
-                  label: plugin.type.title,
-                },
-                plugin.editForm
-              ),
-            ];
-          }),
-      }
-    ),
-    rules: group(
-      {
-        label: t("rules"),
-        multiple: true,
-      },
-      {
-        component: textField({
-          label: t("component"),
-          widget: selectWidget(
-            components.map((component) => [
-              component.label ?? component.name ?? "",
-              component.name ?? "",
-            ])
-          ),
-        }),
-        rule: components.map((component) => [
-          "rules.$.component",
-          equals(component.name ?? ""),
-          textField({
-            label: t("rule"),
+  return createForm<ComponentData>(
+    {
+      label: textField({
+        required: true,
+        label: t("label"),
+      }),
+      name: textField({
+        required: true,
+        label: t("name"),
+      }),
+      required: booleanField({
+        label: t("required"),
+      }),
+      description: textAreaField({
+        label: t("description"),
+      }),
+      multiple: booleanField({
+        label: t("multiple"),
+      }),
+      minItems: integerField({
+        label: t("minItems"),
+        rules: [["multiple", exists()]],
+      }),
+      maxItems: integerField({
+        label: t("maxItems"),
+        rules: [["multiple", exists()]],
+      }),
+      settings: settingsForm ?? undefined,
+      widget: textField({
+        label: "Widget",
+        required: true,
+        widget: selectWidget(
+          findComponentWidgets(type.type.name, plugins.widgets).map(
+            (widget) => [widget.type.title, widget.type.name]
+          )
+        ),
+      }),
+      widgetSettings: widgetSettingsForm,
+      validators: group(
+        {
+          label: t("validators"),
+          multiple: true,
+        },
+        {
+          type: textField({
+            label: t("validator"),
+            required: true,
             widget: selectWidget(
-              findComponentValidators(component.type, plugins.validators).map(
+              findComponentValidators(type.type.name, plugins.validators).map(
                 (plugin) => [plugin.type.title, plugin.type.name]
               )
             ),
           }),
-        ]),
-        settings: plugins.validators
-          .filter((plugin) => plugin.editForm)
-          .map((plugin) => {
-            invariant(plugin.editForm);
-            return [
-              "rules.$.rule",
-              equals(plugin.type.name),
-              group(
-                {
-                  label: plugin.type.title,
-                },
-                plugin.editForm
-              ),
-            ];
+          settings: plugins.validators
+            .filter((plugin) => plugin.editForm)
+            .map((plugin) => {
+              invariant(plugin.editForm);
+              return [
+                "validators.$.type",
+                equals(plugin.type.name),
+                group(
+                  {
+                    label: plugin.type.title,
+                  },
+                  plugin.editForm
+                ),
+              ];
+            }),
+        }
+      ),
+      rules: group(
+        {
+          label: t("rules"),
+          multiple: true,
+        },
+        {
+          component: textField({
+            label: t("component"),
+            widget: selectWidget(
+              components.map((component) => [
+                component.label ?? component.name ?? "",
+                component.name ?? "",
+              ])
+            ),
           }),
-      }
-    ),
-  });
+          rule: components.map((component) => [
+            "rules.$.component",
+            equals(component.name ?? ""),
+            textField({
+              label: t("rule"),
+              widget: selectWidget(
+                findComponentValidators(component.type, plugins.validators).map(
+                  (plugin) => [plugin.type.title, plugin.type.name]
+                )
+              ),
+            }),
+          ]),
+          settings: plugins.validators
+            .filter((plugin) => plugin.editForm)
+            .map((plugin) => {
+              invariant(plugin.editForm);
+              return [
+                "rules.$.rule",
+                equals(plugin.type.name),
+                group(
+                  {
+                    label: plugin.type.title,
+                  },
+                  plugin.editForm
+                ),
+              ];
+            }),
+        }
+      ),
+    },
+    { theme: tailwind }
+  );
 }

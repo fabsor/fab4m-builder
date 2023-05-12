@@ -11,11 +11,12 @@ export default function NewComponent() {
       <div className="flex flex-wrap">
         {context.plugins.types.map((type, i) => (
           <Link
-            className="bg-slate-300 p-3 mr-2 rounded hover:bg-slate-500"
+            className={`${styles.insetBtn} mr-4 p-4 text-base flex font-bold rounded`}
             to={type.type.name}
             key={i}
           >
-            {type.type.title}
+            {type.icon && <span className="text-3xl mr-1">{type.icon}</span>}
+            <span className="my-auto">{type.type.title}</span>
           </Link>
         ))}
       </div>

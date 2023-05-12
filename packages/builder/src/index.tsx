@@ -12,6 +12,7 @@ import { FormBuilder } from "./components/FormBuilder";
 import { routes } from "./router";
 
 export interface Plugin<SettingsType> {
+  icon?: React.ReactNode;
   editForm?: Components<unknown>;
   settingsFromForm?: (data: Record<string, unknown>) => SettingsType;
   formData?: (settings: SettingsType) => Record<string, unknown>;

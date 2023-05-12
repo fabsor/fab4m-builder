@@ -39,5 +39,5 @@ const FormBuilder = formBuilder(
 );
 
 export default function App() {
-  return <div>{FormBuilder}</div>;
+  return <div className="dark:bg-slate-900">{FormBuilder}</div>;
 }

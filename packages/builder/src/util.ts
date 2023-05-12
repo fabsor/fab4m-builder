@@ -2,6 +2,7 @@ import {
   basic,
   SerializedComponent,
   SerializedForm,
+  tailwind,
   unserialize,
 } from "@fab4m/fab4m";
 import invariant from "tiny-invariant";
@@ -66,7 +67,7 @@ export function unserializeForm(form: SerializedForm, plugins: Plugins) {
   return unserialize(
     form,
     plugins.types.map((p) => p.type),
-    [basic],
+    [basic, tailwind],
     plugins.widgets.map((w) => w.type),
     [],
     plugins.validators.map((v) => v.type)

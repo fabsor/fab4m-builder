@@ -7,6 +7,7 @@ import * as NewComponentType from "./routes/new_$type";
 import NewComponent from "./routes/new";
 import * as NewValidator from "./routes/edit_$component_new_validator";
 import Overlay from "./components/Overlay";
+import styles from "./styles";
 
 export interface RouteArgs {
   plugins: Plugins;
@@ -27,7 +28,11 @@ export function routes(args: RouteArgs): RouteObject[] {
       children: [
         {
           path: "",
-          element: <Link to="new">New component</Link>,
+          element: (
+            <Link to="new" className={styles.primaryBtn}>
+              New component
+            </Link>
+          ),
         },
         {
           element: <Overlay />,
