@@ -175,6 +175,7 @@ export function componentForm(
         {
           label: t("validators"),
           multiple: true,
+          widget: horizontalGroupWidget(),
         },
         {
           type: textField({
@@ -207,6 +208,7 @@ export function componentForm(
         {
           label: t("rules"),
           multiple: true,
+          widget: horizontalGroupWidget(),
         },
         {
           component: textField({
