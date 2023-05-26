@@ -74,8 +74,8 @@ export function createTailwindTheme(args: {
       multipleItem: "mb-2 is-clearfix",
       removeItem:
         "block cursor-pointer -mt-1 text-xs text-red-500 hover:text-red-700",
-      horizontalGroup: "",
-      horizontalGroupComponentWrapper: "column",
+      horizontalGroup: "flex",
+      horizontalGroupComponentWrapper: "mr-2",
       multipleItemWrapper: "mb-2",
       selectWrapper: "",
       select:
