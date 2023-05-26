@@ -20,7 +20,10 @@ import {
   integerFieldPlugin,
   numberFieldWidgetPlugin,
 } from "../../src/types/number";
-import { contentPlugin, contentWidgetPlugin } from "../../src/types/content";
+import {
+  emailFieldPlugin,
+  emailFieldWidgetPlugin,
+} from "../../src/types/email";
 
 import { minValidatorPlugin } from "../../src/validators/numbers";
 import { existsValidatorPlugin } from "../../src/validators/exists";
@@ -37,12 +40,12 @@ const FormBuilder = formBuilder(
       textFieldPlugin,
       integerFieldPlugin,
       floatFieldPlugin,
-      contentPlugin,
+      emailFieldPlugin,
     ],
     widgets: [
       textFieldWidgetPlugin,
       numberFieldWidgetPlugin,
-      contentWidgetPlugin,
+      emailFieldWidgetPlugin,
     ],
     validators: [minValidatorPlugin, existsValidatorPlugin],
   },
