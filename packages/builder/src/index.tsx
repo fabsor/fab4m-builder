@@ -6,6 +6,7 @@ import {
   SerializedForm,
   SerializedComponent,
   ValidatorType,
+  FormComponent,
 } from "@fab4m/fab4m";
 import { createBrowserRouter } from "react-router-dom";
 import { FormBuilder } from "./components/FormBuilder";
@@ -21,6 +22,7 @@ export interface Plugin<SettingsType> {
 export interface FormComponentTypePlugin<SettingsType = unknown>
   extends Plugin<SettingsType> {
   type: FormComponentType;
+  init: (name: string) => FormComponent;
 }
 
 export interface WidgetTypePlugin<SettingsType = unknown>

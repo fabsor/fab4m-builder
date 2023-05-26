@@ -2,7 +2,6 @@ import { useForm, SerializedForm, SerializedComponent } from "@fab4m/fab4m";
 import React, { useEffect, useState } from "react";
 import {
   ActionFunction,
-  Outlet,
   redirect,
   useOutletContext,
   useParams,
@@ -14,7 +13,6 @@ import { findComponent, findPlugin, invariantReturn } from "../util";
 import { FormRoute } from "@fab4m/routerforms";
 import { componentForm, componentFromFormData } from "../forms/component";
 import { ActionCreatorArgs, FormBuilderContext } from "src/router";
-import t from "../translations";
 
 interface ComponentData {
   label: string;
@@ -62,11 +60,6 @@ export default function EditComponent() {
   const context = useOutletContext<FormBuilderContext>();
   const { plugin, component, currentForm } = useComponentInfo();
   const [data, changeData] = useState<Partial<ComponentData>>({});
-  const componentContext: ComponentContext = {
-    ...context,
-    plugin,
-    component,
-  };
   useEffect(() => {
     changeData({
       label: component.label,
@@ -98,7 +91,7 @@ export default function EditComponent() {
       }),
       widgetSettings: component.widget.settings as Record<string, unknown>,
     });
-  }, [component]);
+  }, [component.name]);
   const form = useForm(
     () => componentForm(plugin, context.plugins, currentForm, component),
     [plugin]
@@ -111,8 +104,6 @@ export default function EditComponent() {
         useRouteAction={true}
         hideSubmit={true}
       />
-      <h2>{t("validators")}</h2>
-      <Outlet context={componentContext} />
     </section>
   );
 }

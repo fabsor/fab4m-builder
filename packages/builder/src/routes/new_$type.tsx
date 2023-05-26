@@ -30,7 +30,7 @@ export function action({
       await storage.loadForm()
     );
     await storage.addComponent(component);
-    return redirect("../..");
+    return redirect(`../edit/${component.name}`);
   };
 }
 
@@ -46,7 +46,11 @@ export function NewComponentType() {
     () => componentForm(type, context.plugins, formData),
     [type, widgetType]
   ).onDataChange(changeData);
-  return <FormRoute form={form} data={data} useRouteAction={true} />;
+  return (
+    <section className="border -mt-1 dark:border-slate-600 p-3 pl-5 dark:bg-slate-800">
+      <FormRoute form={form} data={data} useRouteAction={true} />
+    </section>
+  );
 }
 
 function useComponentType() {

@@ -7,4 +7,5 @@ export default {
     "border text-l h-fill bg-slate-300 dark:bg-slate-700 dark:text-gray-200 dark:border-slate-400 p-1 px-2 rounded hover:bg-slate-900",
   shadowItem: "bg-slate-300 h-10 rounded mb-2",
   primaryBtn: `${tailwind.classes.submitButton} dark:border-emerald-600 border`,
+  dangerBtn: `bg-red-600 font-bold text-white p-2 rounded block hover:bg-red-700`,
 };

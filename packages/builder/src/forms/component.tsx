@@ -1,15 +1,19 @@
+import React from "react";
 import {
   booleanField,
+  content,
   createForm,
   equals,
   exists,
   fromFormData,
   group,
+  horizontalGroupWidget,
   integerField,
   selectWidget,
   serializeComponent,
   SerializedComponent,
   SerializedForm,
+  submit,
   tailwind,
   textAreaField,
   textField,
@@ -23,6 +27,7 @@ import {
 import { FormComponentTypePlugin, Plugins } from "..";
 import invariant from "tiny-invariant";
 import t from "../translations";
+import styles from "../styles";
 
 export interface ComponentData {
   label: string;
@@ -240,6 +245,17 @@ export function componentForm(
                 ),
               ];
             }),
+        }
+      ),
+      actions: group(
+        { widget: horizontalGroupWidget() },
+        {
+          save: submit({ label: "Save" }, { title: "Save" }),
+          cancel: content({}, () => (
+            <a href=".." className={styles.dangerBtn}>
+              {t("cancel")}
+            </a>
+          )),
         }
       ),
     },

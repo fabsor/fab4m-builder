@@ -1,9 +1,10 @@
 * TODO
-** TODO Dragndrop
-** Skip overlay
-** Adding new component: Icons
+** DONE Dragndrop
+** DONE Skip overlay
+** TODO Adding new component: Icons
 ** Rule groups
 ** Machine name
+** Warning dialog
 ** Components
 *** Content
 *** Email

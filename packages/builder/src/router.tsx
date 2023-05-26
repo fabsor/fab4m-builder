@@ -3,11 +3,8 @@ import { Link, RouteObject } from "react-router-dom";
 import { FormStorage, Plugins } from ".";
 import * as root from "./routes";
 import * as EditComponent from "./routes/edit_$component";
-import * as NewComponentType from "./routes/new_$type";
-import NewComponent from "./routes/new";
-import * as NewValidator from "./routes/edit_$component_new_validator";
+import * as NewComponent from "./routes/new";
 import Overlay from "./components/Overlay";
-import styles from "./styles";
 
 export interface RouteArgs {
   plugins: Plugins;
@@ -27,29 +24,17 @@ export function routes(args: RouteArgs): RouteObject[] {
       element: <root.default plugins={args.plugins} />,
       children: [
         {
-          path: "",
-          element: (
-            <Link to="new" className={styles.primaryBtn}>
-              New component
-            </Link>
-          ),
+          path: "edit/:component",
+          action: EditComponent.action(args),
+          element: <EditComponent.default />,
         },
         {
           element: <Overlay />,
           children: [
             {
-              path: "edit/:component",
-              action: EditComponent.action(args),
-              element: <EditComponent.default />,
-            },
-            {
               path: "new",
-              element: <NewComponent />,
-            },
-            {
-              path: "new/:type",
-              action: NewComponentType.action(args),
-              element: <NewComponentType.NewComponentType />,
+              action: NewComponent.action(args),
+              element: <NewComponent.default />,
             },
           ],
         },
