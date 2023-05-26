@@ -1,7 +1,7 @@
 * TODO
 ** DONE Dragndrop
 ** DONE Skip overlay
-** TODO Adding new component: Icons
+** DONE Adding new component: Icons
 ** Rule groups
 ** Machine name
 ** Warning dialog

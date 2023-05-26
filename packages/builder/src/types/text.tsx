@@ -3,7 +3,7 @@ import { textField, textFieldType, textFieldWidgetType } from "@fab4m/fab4m";
 import { FormComponentTypePlugin, WidgetTypePlugin } from "src";
 
 export const textFieldPlugin: FormComponentTypePlugin = {
-  icon: <>&hellip;</>,
+  icon: <>&#128441;</>,
   type: textFieldType,
   init: (name) => textField({ name }),
 };
