@@ -2,11 +2,10 @@
 ** DONE Dragndrop
 ** DONE Skip overlay
 ** DONE Adding new component: Icons
-** Rule groups
-** Machine name
-** Warning dialog
+** DONE Machine name
+** Warning dialog?
 ** Components
-*** Content
+*** Content [??]
 *** Email
 *** File upload
 *** Float
@@ -34,3 +33,4 @@
 *** maximal length
 *** Min value
 *** minimal length
+** Rule groups

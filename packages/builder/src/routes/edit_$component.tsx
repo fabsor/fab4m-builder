@@ -93,7 +93,13 @@ export default function EditComponent() {
     });
   }, [component.name]);
   const form = useForm(
-    () => componentForm(plugin, context.plugins, currentForm, component),
+    () =>
+      componentForm({
+        type: plugin,
+        plugins: context.plugins,
+        formData: currentForm,
+        currentComponent: component,
+      }),
     [plugin]
   ).onDataChange(changeData);
   return (

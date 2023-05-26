@@ -20,6 +20,8 @@ import {
   integerFieldPlugin,
   numberFieldWidgetPlugin,
 } from "../../src/types/number";
+import { contentPlugin, contentWidgetPlugin } from "../../src/types/content";
+
 import { minValidatorPlugin } from "../../src/validators/numbers";
 import { existsValidatorPlugin } from "../../src/validators/exists";
 import "@fab4m/fab4m/css/basic/basic.css";
@@ -31,8 +33,17 @@ const form = createForm({
 
 const FormBuilder = formBuilder(
   {
-    types: [textFieldPlugin, integerFieldPlugin, floatFieldPlugin],
-    widgets: [textFieldWidgetPlugin, numberFieldWidgetPlugin],
+    types: [
+      textFieldPlugin,
+      integerFieldPlugin,
+      floatFieldPlugin,
+      contentPlugin,
+    ],
+    widgets: [
+      textFieldWidgetPlugin,
+      numberFieldWidgetPlugin,
+      contentWidgetPlugin,
+    ],
     validators: [minValidatorPlugin, existsValidatorPlugin],
   },
   localFormStorage("form", serialize(form))

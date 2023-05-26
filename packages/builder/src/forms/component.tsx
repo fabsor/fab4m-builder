@@ -7,6 +7,7 @@ import {
   exists,
   fromFormData,
   group,
+  hiddenFieldWidget,
   horizontalGroupWidget,
   integerField,
   selectWidget,
@@ -17,6 +18,7 @@ import {
   tailwind,
   textAreaField,
   textField,
+  textFieldWidget,
   VariantDefinition,
 } from "@fab4m/fab4m";
 import {
@@ -56,7 +58,7 @@ export async function componentFromFormData(
   const widgetName = formData.get("widget")?.toString();
   const widget = findPlugin(widgetName ?? "", plugins.widgets);
   invariant(widget.type.init);
-  const form = componentForm(type, plugins, editForm);
+  const form = componentForm({ type, plugins, formData: editForm });
   const data = fromFormData(form, formData);
   const serializedComponent = serializeComponent({
     ...data,
@@ -92,33 +94,34 @@ export async function componentFromFormData(
   return serializedComponent;
 }
 
-export function componentForm(
-  type: FormComponentTypePlugin,
-  plugins: Plugins,
-  formData: SerializedForm,
-  currentComponent?: SerializedComponent
-) {
-  const components: SerializedComponent[] = formData.components.filter(
-    (c) => !Array.isArray(c) && c.name !== currentComponent?.name
+export function componentForm(args: {
+  type: FormComponentTypePlugin;
+  plugins: Plugins;
+  formData: SerializedForm;
+  currentComponent?: SerializedComponent;
+  withMachineName?: boolean;
+}) {
+  const components: SerializedComponent[] = args.formData.components.filter(
+    (c) => !Array.isArray(c) && c.name !== args.currentComponent?.name
   ) as SerializedComponent[];
-  const settingsForm = type.editForm
+  const settingsForm = args.type.editForm
     ? group(
         {
           label: t("componentSettings"),
         },
-        type.editForm
+        args.type.editForm
       )
     : undefined;
 
   const widgetSettingsForm = findComponentWidgets(
-    type.type.name,
-    plugins.widgets
+    args.type.type.name,
+    args.plugins.widgets
   )
     .filter(
       (plugin) =>
         plugin.editForm &&
         (!plugin.type.components ||
-          plugin.type.components.indexOf(type.type.name))
+          plugin.type.components.indexOf(args.type.type.name))
     )
     .map((plugin): VariantDefinition => {
       invariant(plugin.editForm);
@@ -141,7 +144,8 @@ export function componentForm(
       }),
       name: textField({
         required: true,
-        label: t("name"),
+        label: t("machineName"),
+        widget: args.withMachineName ? textFieldWidget() : hiddenFieldWidget(),
       }),
       required: booleanField({
         label: t("required"),
@@ -165,7 +169,7 @@ export function componentForm(
         label: "Widget",
         required: true,
         widget: selectWidget(
-          findComponentWidgets(type.type.name, plugins.widgets).map(
+          findComponentWidgets(args.type.type.name, args.plugins.widgets).map(
             (widget) => [widget.type.title, widget.type.name]
           )
         ),
@@ -182,12 +186,13 @@ export function componentForm(
             label: t("validator"),
             required: true,
             widget: selectWidget(
-              findComponentValidators(type.type.name, plugins.validators).map(
-                (plugin) => [plugin.type.title, plugin.type.name]
-              )
+              findComponentValidators(
+                args.type.type.name,
+                args.plugins.validators
+              ).map((plugin) => [plugin.type.title, plugin.type.name])
             ),
           }),
-          settings: plugins.validators
+          settings: args.plugins.validators
             .filter((plugin) => plugin.editForm)
             .map((plugin) => {
               invariant(plugin.editForm);
@@ -226,13 +231,14 @@ export function componentForm(
             textField({
               label: t("rule"),
               widget: selectWidget(
-                findComponentValidators(component.type, plugins.validators).map(
-                  (plugin) => [plugin.type.title, plugin.type.name]
-                )
+                findComponentValidators(
+                  component.type,
+                  args.plugins.validators
+                ).map((plugin) => [plugin.type.title, plugin.type.name])
               ),
             }),
           ]),
-          settings: plugins.validators
+          settings: args.plugins.validators
             .filter((plugin) => plugin.editForm)
             .map((plugin) => {
               invariant(plugin.editForm);

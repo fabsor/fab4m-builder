@@ -8,4 +8,5 @@ export default {
   shadowItem: "bg-slate-300 h-10 rounded mb-2",
   primaryBtn: `${tailwind.classes.submitButton} dark:border-emerald-600 border`,
   dangerBtn: `bg-red-600 font-bold text-white p-2 rounded block hover:bg-red-700`,
+  smallText: "text-xs dark:text-slate-200",
 };

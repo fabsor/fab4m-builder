@@ -43,7 +43,7 @@ export function NewComponentType() {
     ? findPlugin(data.widget, context.plugins.widgets)
     : undefined;
   const form = useForm(
-    () => componentForm(type, context.plugins, formData),
+    () => componentForm({ type, plugins: context.plugins, formData }),
     [type, widgetType]
   ).onDataChange(changeData);
   return (
