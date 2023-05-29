@@ -24,6 +24,14 @@ import {
   emailFieldPlugin,
   emailFieldWidgetPlugin,
 } from "../../src/types/email";
+import {
+  dateFieldPlugin,
+  datePickerWidgetPlugin,
+  dateRangeFieldPlugin,
+  dateRangePickerWidgetPlugin,
+  dateTimeFieldPlugin,
+  dateTimePickerWidgetPlugin,
+} from "../../src/types/date";
 import { fileFieldPlugin, fileUploadWidgetPlugin } from "../../src/types/file";
 
 import { minValidatorPlugin } from "../../src/validators/numbers";
@@ -43,12 +51,18 @@ const FormBuilder = formBuilder(
       floatFieldPlugin,
       emailFieldPlugin,
       fileFieldPlugin,
+      dateFieldPlugin,
+      dateTimeFieldPlugin,
+      dateRangeFieldPlugin,
     ],
     widgets: [
       textFieldWidgetPlugin,
       numberFieldWidgetPlugin,
       emailFieldWidgetPlugin,
       fileUploadWidgetPlugin,
+      datePickerWidgetPlugin,
+      dateTimePickerWidgetPlugin,
+      dateRangePickerWidgetPlugin,
     ],
     validators: [minValidatorPlugin, existsValidatorPlugin],
   },

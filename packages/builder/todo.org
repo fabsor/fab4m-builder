@@ -8,7 +8,7 @@
 *** Content [??]
 *** DONE Email
 *** DONE File upload
-*** Float
+*** DONE Float
 *** Date
 *** Groups
 *** Page break
