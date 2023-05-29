@@ -6,8 +6,8 @@
 ** Warning dialog?
 ** Components
 *** Content [??]
-*** Email
-*** File upload
+*** DONE Email
+*** DONE File upload
 *** Float
 *** Date
 *** Groups

@@ -7,11 +7,11 @@ import {
 } from "../../component";
 import { Widget, widget, WidgetType } from "../../widget";
 
-interface FileUploadAdapter {
+export interface FileUploadAdapter {
   upload: (file: File) => Promise<string>;
 }
 
-interface FileUploadSettings {
+export interface FileUploadSettings {
   adapter?: FileUploadAdapter;
 }
 

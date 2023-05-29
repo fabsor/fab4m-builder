@@ -24,6 +24,7 @@ import {
   emailFieldPlugin,
   emailFieldWidgetPlugin,
 } from "../../src/types/email";
+import { fileFieldPlugin, fileUploadWidgetPlugin } from "../../src/types/file";
 
 import { minValidatorPlugin } from "../../src/validators/numbers";
 import { existsValidatorPlugin } from "../../src/validators/exists";
@@ -41,11 +42,13 @@ const FormBuilder = formBuilder(
       integerFieldPlugin,
       floatFieldPlugin,
       emailFieldPlugin,
+      fileFieldPlugin,
     ],
     widgets: [
       textFieldWidgetPlugin,
       numberFieldWidgetPlugin,
       emailFieldWidgetPlugin,
+      fileUploadWidgetPlugin,
     ],
     validators: [minValidatorPlugin, existsValidatorPlugin],
   },

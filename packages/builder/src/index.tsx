@@ -21,7 +21,7 @@ export interface Plugin<SettingsType> {
 
 export interface FormComponentTypePlugin<SettingsType = unknown>
   extends Plugin<SettingsType> {
-  type: FormComponentType;
+  type: FormComponentType<SettingsType>;
   init: (name: string) => FormComponent;
 }
 
