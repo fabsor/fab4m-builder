@@ -97,9 +97,15 @@ export default function FormBuilder(props: { plugins: Plugins }) {
         key={i}
         name={component.name}
         header={
-          <Link to={`edit/${component.name}`} className="block">
-            {component.label ?? component.name}
-          </Link>
+          <>
+            {component.type !== "pagebreak" ? (
+              <Link to={`edit/${component.name}`} className="block">
+                {component.label ?? component.name}
+              </Link>
+            ) : (
+              t("pageBreak")
+            )}
+          </>
         }
       >
         {params.component === component.name && (

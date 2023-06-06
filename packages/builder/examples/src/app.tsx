@@ -25,6 +25,11 @@ import {
   emailFieldWidgetPlugin,
 } from "../../src/types/email";
 import {
+  pageBreakPlugin,
+  pageBreakWidgetPlugin,
+} from "../../src/types/pagebreak";
+
+import {
   dateFieldPlugin,
   datePickerWidgetPlugin,
   dateRangeFieldPlugin,
@@ -58,6 +63,7 @@ const FormBuilder = formBuilder(
       dateFieldPlugin,
       dateTimeFieldPlugin,
       dateRangeFieldPlugin,
+      pageBreakPlugin,
     ],
     widgets: [
       textFieldWidgetPlugin,
@@ -67,6 +73,7 @@ const FormBuilder = formBuilder(
       datePickerWidgetPlugin,
       dateTimePickerWidgetPlugin,
       dateRangePickerWidgetPlugin,
+      pageBreakWidgetPlugin,
     ],
     validators: [minValidatorPlugin, existsValidatorPlugin],
   },

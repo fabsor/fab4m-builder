@@ -23,7 +23,10 @@ export function action({ plugins, storage }: RouteArgs) {
     component.label = plugin.type.title;
     form.components.push(serializeComponent(component));
     await storage.saveForm(form);
-    return redirect(`../edit/${component.name}`);
+
+    return redirect(
+      component.type.splitsForm ? ".." : `../edit/${component.name}`
+    );
   };
 }
 
