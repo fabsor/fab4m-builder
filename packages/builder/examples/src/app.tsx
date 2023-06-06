@@ -31,6 +31,7 @@ import {
   dateRangePickerWidgetPlugin,
   dateTimeFieldPlugin,
   dateTimePickerWidgetPlugin,
+  setLocales,
 } from "../../src/types/date";
 import { fileFieldPlugin, fileUploadWidgetPlugin } from "../../src/types/file";
 
@@ -38,6 +39,9 @@ import { minValidatorPlugin } from "../../src/validators/numbers";
 import { existsValidatorPlugin } from "../../src/validators/exists";
 import "@fab4m/fab4m/css/basic/basic.css";
 import { localFormStorage } from "../../src/localstorage";
+import sv from "date-fns/locale/sv";
+
+setLocales([sv]);
 
 const form = createForm({
   text: textField({ label: "Text" }),

@@ -12,26 +12,32 @@ import { createBrowserRouter } from "react-router-dom";
 import { FormBuilder } from "./components/FormBuilder";
 import { routes } from "./router";
 
-export interface Plugin<SettingsType> {
+export interface Plugin<SettingsType, SettingsFormData> {
   icon?: React.ReactNode;
-  editForm?: Components<unknown>;
-  settingsFromForm?: (data: Record<string, unknown>) => SettingsType;
-  formData?: (settings: SettingsType) => Record<string, unknown>;
+  editForm?: () => Components<SettingsFormData>;
+  settingsFromForm?: (data: SettingsFormData) => SettingsType;
+  formData?: (settings: SettingsType) => SettingsFormData;
 }
 
-export interface FormComponentTypePlugin<SettingsType = unknown>
-  extends Plugin<SettingsType> {
+export interface FormComponentTypePlugin<
+  SettingsType = unknown,
+  SettingsFormData = Record<string, unknown>
+> extends Plugin<SettingsType, SettingsFormData> {
   type: FormComponentType<SettingsType>;
   init: (name: string) => FormComponent;
 }
 
-export interface WidgetTypePlugin<SettingsType = unknown>
-  extends Plugin<SettingsType> {
+export interface WidgetTypePlugin<
+  SettingsType = unknown,
+  SettingsFormData = Record<string, unknown>
+> extends Plugin<SettingsType, SettingsFormData> {
   type: WidgetType;
 }
 
-export interface ValidatorTypePlugin<SettingsType = unknown>
-  extends Plugin<SettingsType> {
+export interface ValidatorTypePlugin<
+  SettingsType = unknown,
+  SettingsFormData = Record<string, unknown>
+> extends Plugin<SettingsType, SettingsFormData> {
   type: ValidatorType;
 }
 

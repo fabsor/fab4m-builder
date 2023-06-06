@@ -109,20 +109,14 @@ export function componentForm(args: {
         {
           label: t("componentSettings"),
         },
-        args.type.editForm
+        args.type.editForm()
       )
     : undefined;
-
   const widgetSettingsForm = findComponentWidgets(
     args.type.type.name,
     args.plugins.widgets
   )
-    .filter(
-      (plugin) =>
-        plugin.editForm &&
-        (!plugin.type.components ||
-          plugin.type.components.indexOf(args.type.type.name))
-    )
+    .filter((plugin) => plugin.editForm)
     .map((plugin): VariantDefinition => {
       invariant(plugin.editForm);
       return [
@@ -132,7 +126,7 @@ export function componentForm(args: {
           {
             label: t("widgetSettings"),
           },
-          plugin.editForm
+          plugin.editForm()
         ),
       ];
     });
@@ -249,7 +243,7 @@ export function componentForm(args: {
                   {
                     label: plugin.type.title,
                   },
-                  plugin.editForm
+                  plugin.editForm()
                 ),
               ];
             }),

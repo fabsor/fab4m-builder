@@ -29,6 +29,7 @@ export * from "./validators/values";
 export * from "./validators/numbers";
 export * from "./validators/exists";
 export * from "./validators/callback";
+export * from "./validators/unavailable";
 export * from "./rules/or";
 export * from "./rules/and";
 export * from "./rules/not";
@@ -42,6 +43,7 @@ export * from "./hooks";
 export * from "./formview";
 export * from "./formdata";
 export * from "./widgets/hidden";
+
 let defaultTheme: Theme = basic;
 export { defaultTheme, basic, basicDark };
 

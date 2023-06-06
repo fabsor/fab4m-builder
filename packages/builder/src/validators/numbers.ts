@@ -3,12 +3,12 @@ import { ValidatorTypePlugin } from "..";
 
 export const minValidatorPlugin: ValidatorTypePlugin<number> = {
   type: minValidator,
-  editForm: {
+  editForm: () => ({
     min: integerField({
       label: "Min value",
       required: true,
     }),
-  },
+  }),
   formData: (settings: number) => ({
     min: settings,
   }),
