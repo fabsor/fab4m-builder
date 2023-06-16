@@ -10,6 +10,7 @@ import {
   setDefaultTheme,
   useForm,
   serialize,
+  groupWidgetType,
 } from "@fab4m/fab4m";
 import { formBuilder } from "../../src";
 import "react-datepicker/dist/react-datepicker.css";
@@ -30,6 +31,8 @@ import {
   pageBreakPlugin,
   pageBreakWidgetPlugin,
 } from "../../src/types/pagebreak";
+
+import { groupPlugin, groupWidgetPlugin } from "../../src/types/group";
 
 import {
   dateFieldPlugin,
@@ -67,6 +70,7 @@ const FormBuilder = formBuilder(
       dateRangeFieldPlugin,
       pageBreakPlugin,
       urlFieldPlugin,
+      groupPlugin,
     ],
     widgets: [
       textFieldWidgetPlugin,
@@ -78,6 +82,7 @@ const FormBuilder = formBuilder(
       dateRangePickerWidgetPlugin,
       pageBreakWidgetPlugin,
       linkFieldWidgetPlugin,
+      groupWidgetPlugin,
     ],
     validators: [minValidatorPlugin, existsValidatorPlugin],
   },

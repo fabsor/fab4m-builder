@@ -6,16 +6,23 @@ export default function SortableItem(props: {
   name: string;
   header: React.ReactNode;
   children: React.ReactNode;
+  collection: string;
 }) {
+  const id = `${props.collection}.${props.name}`;
   const { active, attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: props.name });
+    useSortable({ id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
   return (
-    <article ref={setNodeRef} style={style} {...attributes} className="mb-2">
+    <article
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      className={`mb-2 ${active?.id === id ? "opacity-30" : ""}`}
+    >
       <header className={`${styles.item} mb-0`}>
         <div
           className={`${styles.insetBtn} w-10 text-l text-center mr-2 cursor-move`}
@@ -25,7 +32,7 @@ export default function SortableItem(props: {
         </div>
         <h3 className="grow my-auto">{props.header}</h3>
       </header>
-      <div className={active ? "hidden" : ""}>{props.children}</div>
+      <div>{props.children}</div>
     </article>
   );
 }
