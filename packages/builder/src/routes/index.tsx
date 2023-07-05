@@ -5,7 +5,7 @@ import {
   SerializedForm,
   StatefulFormView,
 } from "@fab4m/fab4m";
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useCallback, useRef, useState } from "react";
 import t from "../translations";
 import {
   ActionFunction,
@@ -31,12 +31,14 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  useDroppable,
   DragEndEvent,
   DragOverEvent,
   MeasuringStrategy,
   UniqueIdentifier,
+  CollisionDetection,
   DragOverlay,
+  pointerWithin,
+  rectIntersection,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -45,6 +47,7 @@ import {
 } from "@dnd-kit/sortable";
 import SortableItem from "../components/SortableItem";
 import { createPortal } from "react-dom";
+import invariant from "tiny-invariant";
 
 export function loader({ storage }: LoaderCreatorArgs) {
   return () => {
@@ -56,23 +59,28 @@ export function action({ storage }: ActionCreatorArgs): ActionFunction {
   return async ({ request }) => {
     const data = await request.formData();
     const form = await storage.loadForm();
-    const from = invariantReturn(data.get("from"));
-    const to = invariantReturn(data.get("to"));
-    const [source, sourceList, sourceIndex] = findComponent(
-      form.components,
-      from.toString()
-    );
-    const [, targetList, targetIndex] = findComponent(
-      form.components,
-      to.toString()
-    );
-    // We're dropping an item into an empty group.
-    if (to.toString().startsWith("drop-")) {
-    }
-
-    if (source && targetList) {
-      sourceList?.splice(sourceIndex, 1);
-      targetList?.splice(targetIndex, 0, source);
+    const from = invariantReturn(data.get("from")).toString();
+    const to = invariantReturn(data.get("to")).toString();
+    const [sourceList, sourceIndex] = findKey(form.components, from);
+    if (to.startsWith("drop-")) {
+      const parentKey = to.split("drop-")[1];
+      const parent = form.components.find(
+        (c) => !Array.isArray(c) && c.name === parentKey
+      );
+      if (parent && !Array.isArray(parent)) {
+        parent.components ??= [];
+        parent.components.push(form.components[sourceIndex]);
+        form.components.splice(sourceIndex, 1);
+      }
+    } else {
+      const [targetList, targetIndex] = findKey(form.components, to);
+      if (sourceList && targetList) {
+        const item = sourceList[sourceIndex];
+        if (sourceIndex !== -1 && targetIndex !== -1) {
+          sourceList.splice(sourceIndex, 1);
+          targetList.splice(targetIndex, 0, item);
+        }
+      }
     }
     return await storage.saveForm(form);
   };
@@ -82,16 +90,10 @@ export default function FormBuilder(props: { plugins: Plugins }) {
   const form = useLoaderData() as SerializedForm;
   const params = useParams();
   const fetcher = useFetcher();
-  const [activeItem, setActiveItem] = useState<SerializedComponent | null>(
-    null
-  );
-  const [over, setOver] = useState<string | undefined>(undefined);
-
+  const [activeItem, setActiveItem] = useState<string | null>(null);
+  const items = draggableItems(form.components);
   function setActive(id: UniqueIdentifier) {
-    const [component] = findComponent(form.components, id);
-    if (component) {
-      setActiveItem(component);
-    }
+    setActiveItem(id.toString());
   }
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -103,7 +105,6 @@ export default function FormBuilder(props: { plugins: Plugins }) {
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     setActiveItem(null);
-    setOver(null);
     if (over && active.id !== over.id) {
       fetcher.submit(
         { from: active.id.toString(), to: over.id.toString() },
@@ -111,13 +112,7 @@ export default function FormBuilder(props: { plugins: Plugins }) {
       );
     }
   }
-
-  function handleDragOver(event: DragOverEvent) {
-    setOver(event.over?.id?.toString());
-  }
-
   const outlet = <Outlet context={{ plugins: props.plugins }} />;
-
   return (
     <main className="lg:grid grid-cols-8 gap-5 min-h-screen">
       <section className="col-span-6 p-4">
@@ -125,7 +120,6 @@ export default function FormBuilder(props: { plugins: Plugins }) {
         <div className="mb-6">
           <DndContext
             sensors={sensors}
-            collisionDetection={closestCenter}
             measuring={{
               droppable: {
                 strategy: MeasuringStrategy.Always,
@@ -133,14 +127,12 @@ export default function FormBuilder(props: { plugins: Plugins }) {
             }}
             onDragStart={(e) => setActive(e.active.id)}
             onDragEnd={handleDragEnd}
-            onDragOver={handleDragOver}
           >
             <Components
-              over={over}
-              components={form.components}
+              items={items}
+              parent="root||"
               outlet={outlet}
               activeItem={activeItem}
-              id={""}
             />
           </DndContext>
         </div>
@@ -163,115 +155,76 @@ export default function FormBuilder(props: { plugins: Plugins }) {
 }
 
 interface ComponentsProps {
-  components: SerializedComponentsList;
+  parent: string;
+  items: Map<string, SerializedComponent>;
   outlet: JSX.Element;
-  activeItem: SerializedComponent | null;
-  over?: string;
-  id: string;
+  activeItem: string | null;
 }
 
-function Components({
-  components,
-  outlet,
-  activeItem,
-  id,
-  over,
-}: ComponentsProps) {
-  // Filter out any components that are variants, those are not supported in the form builder yet.
+function Components(props: ComponentsProps) {
+  const renderedItems: JSX.Element[] = [];
   const params = useParams();
-  const componentsList = components.filter(
-    (c) => !Array.isArray(c) && c.name
-  ) as Array<Exclude<SerializedComponent, "name"> & { name: string }>;
-  console.log(activeItem, over);
-  if (over && over.startsWith(id) && activeItem) {
-    const [, , index] = findComponent(componentsList, over);
-    if (
-      index &&
-      componentsList.findIndex((c) => c.name === activeItem.name) !== -1
-    ) {
-      componentsList.splice(index, 0, activeItem);
+  for (const [key, component] of props.items.entries()) {
+    if (key.startsWith(props.parent)) {
+      renderedItems.push(
+        <React.Fragment key={key}>
+          <SortableItem
+            name={component.name ?? ""}
+            parent={props.parent}
+            header={
+              <>
+                {component.type !== "pagebreak" ? (
+                  <Link to={`edit/${component.name}`} className="block">
+                    {component.label ?? component.name}
+                  </Link>
+                ) : (
+                  t("pageBreak")
+                )}
+              </>
+            }
+          >
+            {params.component === component.name && (
+              <div className="border -mt-1 dark:border-slate-600 p-3 pl-5 dark:bg-slate-800">
+                {props.outlet}
+              </div>
+            )}
+            {component.type === "group" && props.activeItem !== key && (
+              <div className="border -mt-3 dark:border-slate-600 p-3 pl-5 dark:bg-slate-800">
+                <Components
+                  parent={component.name ?? ""}
+                  items={props.items}
+                  outlet={props.outlet}
+                  activeItem={props.activeItem}
+                />
+                <Link to={`/new?parent=${key}`} className={styles.primaryBtn}>
+                  {t("newComponent")}
+                </Link>
+              </div>
+            )}
+          </SortableItem>
+        </React.Fragment>
+      );
     }
   }
 
-  const items = componentsList.map((c) => `${id}.${c.name}`);
-  const renderedItems = items.map((name, i) => {
-    const component = invariantReturn(
-      componentsList.find((c) => `${id}.${c.name}` === name)
-    );
-    return (
-      <React.Fragment key={i}>
-        <SortableItem
-          key={i}
-          name={component.name}
-          collection={id}
-          header={
-            <>
-              {component.type !== "pagebreak" ? (
-                <Link to={`edit/${component.name}`} className="block">
-                  {component.label ?? component.name}
-                </Link>
-              ) : (
-                t("pageBreak")
-              )}
-            </>
-          }
-        >
-          {params.component === component.name && (
-            <div className="border -mt-1 dark:border-slate-600 p-3 pl-5 dark:bg-slate-800">
-              {outlet}
-            </div>
-          )}
-        </SortableItem>
-        {component.type === "group" && (
-          <Droppable
-            component={component}
-            id={id}
-            over={over}
-            outlet={outlet}
-            activeItem={activeItem}
-          />
-        )}
-      </React.Fragment>
-    );
-  });
-
   return (
     <div>
-      <SortableContext items={items} strategy={verticalListSortingStrategy}>
+      <SortableContext
+        items={[...props.items.keys()].filter((k) =>
+          k.startsWith(props.parent)
+        )}
+        strategy={verticalListSortingStrategy}
+      >
         {renderedItems}
       </SortableContext>
       {createPortal(
         <DragOverlay>
-          {activeItem ? <Item title={"wat"}></Item> : null}
+          {props.activeItem ? (
+            <Item title={props.items.get(props.activeItem)?.label ?? ""}></Item>
+          ) : null}
         </DragOverlay>,
         document.body
       )}
-    </div>
-  );
-}
-
-export function Droppable(props: {
-  id: string;
-  activeItem: SerializedComponent | null;
-  component: SerializedComponent;
-  over?: string;
-  outlet: JSX.Element;
-}) {
-  const { setNodeRef } = useDroppable({
-    id: `drop-${props.id}.${props.component.name}`,
-  });
-  return (
-    <div
-      className="-mt-2 border border-t-0 dark:border-slate-600 p-2 h-64"
-      ref={setNodeRef}
-    >
-      <Components
-        over={props.over}
-        outlet={props.outlet}
-        components={props.component.components ?? []}
-        activeItem={props.activeItem}
-        id={props.component.name ?? ""}
-      />
     </div>
   );
 }
@@ -286,34 +239,47 @@ export const Item = forwardRef<HTMLDivElement, { title: string }>(
   }
 );
 
-function findComponent(
-  components: SerializedComponentsList,
-  id: UniqueIdentifier
-):
-  | [SerializedComponent, SerializedComponentsList, number]
-  | [null, null, null] {
-  const path = id.toString().split(".");
-  if (path[0] === "") {
-    path.splice(0, 1);
+function draggableItems(
+  items: SerializedComponentsList,
+  parent: string = "root||",
+  result: Map<string, SerializedComponent> = new Map()
+) {
+  for (const item of items) {
+    if (!Array.isArray(item) && item) {
+      result.set(`${parent}${item.name}`, item);
+      if (item.components) {
+        draggableItems(
+          item.components,
+          `${parent !== "root||" ? parent : ""}${item.name}||`,
+          result
+        );
+      }
+    }
   }
-  let tree = components;
-  let component: SerializedComponent | null = null;
-  let componentIndex: number = -1;
-  for (const node of path) {
-    const matchIndex = tree.findIndex(
-      (c) => !Array.isArray(c) && c.name === node
-    );
-    const match = tree[matchIndex];
-    if (!match || Array.isArray(match)) {
-      break;
-    }
-    componentIndex = matchIndex;
-    component = match;
-    if (!component.components) {
-      break;
-    }
+  return result;
+}
 
-    tree = component.components;
+function findKey(
+  components: SerializedComponentsList,
+  key: string
+): [SerializedComponentsList, number] | [null, -1] {
+  if (key.startsWith("root||")) {
+    key = key.split("root||")[1];
+  } else {
+    const parts = key.split("||");
+
+    for (const part of parts.slice(0, parts.length - 1)) {
+      const node = components.find((c) => !Array.isArray(c) && c.name === part);
+      if (node && !Array.isArray(node) && node.components) {
+        components = node.components;
+      } else {
+        return [null, -1];
+      }
+    }
+    key = parts[parts.length - 1];
   }
-  return component ? [component, tree, componentIndex] : [null, null, null];
+  const index = components.findIndex(
+    (c) => !Array.isArray(c) && c.name === key
+  );
+  return [components, index];
 }

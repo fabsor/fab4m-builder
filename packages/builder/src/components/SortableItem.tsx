@@ -4,11 +4,11 @@ import styles from "../styles";
 import { CSS } from "@dnd-kit/utilities";
 export default function SortableItem(props: {
   name: string;
+  parent: string;
   header: React.ReactNode;
   children: React.ReactNode;
-  collection: string;
 }) {
-  const id = `${props.collection}.${props.name}`;
+  const id = `${props.parent}${props.name}`;
   const { active, attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
