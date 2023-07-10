@@ -1,6 +1,7 @@
 import {
   basic,
   SerializedComponent,
+  SerializedComponentsList,
   SerializedForm,
   tailwind,
   unserialize,
@@ -51,14 +52,13 @@ export function findComponentValidators(
 
 export function updateComponent(
   form: SerializedForm,
+  key: string,
   component: SerializedComponent
 ): SerializedForm {
   return produce(form, (draft) => {
-    const index = draft.components.findIndex(
-      (c) => !Array.isArray(c) && c.name === component.name
-    );
-    if (index !== -1) {
-      draft.components[index] = component;
+    const [list, index] = findKey(draft.components, key);
+    if (list) {
+      list[index] = component;
     }
   });
 }
@@ -72,4 +72,64 @@ export function unserializeForm(form: SerializedForm, plugins: Plugins) {
     [],
     plugins.validators.map((v) => v.type)
   );
+}
+
+export function draggableItems(
+  items: SerializedComponentsList,
+  parent: string = "root:",
+  result: Map<string, SerializedComponent> = new Map()
+) {
+  for (const item of items) {
+    if (!Array.isArray(item) && item) {
+      result.set(`${parent}${item.name}`, item);
+      if (item.components) {
+        draggableItems(
+          item.components,
+          `${parent !== "root:" ? parent : ""}${item.name}:`,
+          result
+        );
+      }
+    }
+  }
+  return result;
+}
+
+export function findKey(
+  components: SerializedComponentsList,
+  key: string
+): [SerializedComponentsList, number] | [null, -1] {
+  if (key.startsWith("root:")) {
+    key = key.split("root:")[1];
+  } else {
+    const parts = key.split(":");
+
+    for (const part of parts.slice(0, parts.length - 1)) {
+      const node = components.find((c) => !Array.isArray(c) && c.name === part);
+      if (node && !Array.isArray(node) && node.components) {
+        components = node.components;
+      } else {
+        return [null, -1];
+      }
+    }
+    key = parts[parts.length - 1];
+  }
+  const index = components.findIndex(
+    (c) => !Array.isArray(c) && c.name === key
+  );
+  return [components, index];
+}
+
+export function findComponentFromKey(
+  components: SerializedComponentsList,
+  key: string
+): SerializedComponent {
+  const [list, index] = findKey(components, key);
+  if (!list) {
+    throw new Error("Not found");
+  }
+  const component = list[index];
+  if (Array.isArray(component)) {
+    throw new Error("Variants not supported");
+  }
+  return component;
 }

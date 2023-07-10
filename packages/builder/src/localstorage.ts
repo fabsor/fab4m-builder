@@ -28,10 +28,9 @@ export function localFormStorage(
       form.components.push(component);
       await saveForm(form);
     },
-    editComponent: async (component) => {
+    editComponent: async (key, component) => {
       invariant(form);
-      const updatedForm = updateComponent(form, component);
-      console.log(component);
+      const updatedForm = updateComponent(form, key, component);
       await saveForm(updatedForm);
     },
     saveForm,

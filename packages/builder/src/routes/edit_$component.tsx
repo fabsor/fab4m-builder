@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 import { FormComponentTypePlugin } from "../";
 import invariant from "tiny-invariant";
-import { findComponent, findPlugin, invariantReturn } from "../util";
+import { findComponentFromKey, findPlugin } from "../util";
 import { FormRoute } from "@fab4m/routerforms";
 import { componentForm, componentFromFormData } from "../forms/component";
 import { ActionCreatorArgs, FormBuilderContext } from "src/router";
@@ -36,9 +36,10 @@ export function action({
 }: ActionCreatorArgs): ActionFunction {
   return async ({ params, request }) => {
     const currentForm = await storage.loadForm();
-    const currentComponent = findComponent(
-      currentForm,
-      invariantReturn(params.component)
+    invariant(params.component);
+    const currentComponent = findComponentFromKey(
+      currentForm.components,
+      params.component
     );
     const component = await componentFromFormData(
       currentComponent.type,
@@ -46,7 +47,7 @@ export function action({
       request,
       currentForm
     );
-    await storage.editComponent(component);
+    await storage.editComponent(params.component, component);
     return redirect("../..");
   };
 }
@@ -119,7 +120,8 @@ function useComponentInfo() {
   const context = useOutletContext<FormBuilderContext>();
   invariant(params.component);
   const form = useRouteLoaderData("root") as SerializedForm;
-  const component = findComponent(form, params.component);
+  const component = findComponentFromKey(form.components, params.component);
+
   const plugin = findPlugin<FormComponentTypePlugin>(
     component.type,
     context.plugins.types

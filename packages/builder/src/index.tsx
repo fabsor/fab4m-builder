@@ -44,7 +44,7 @@ export interface ValidatorTypePlugin<
 export interface FormStorage {
   loadForm: () => Promise<SerializedForm>;
   addComponent: (newComponent: SerializedComponent) => Promise<void>;
-  editComponent: (component: SerializedComponent) => Promise<void>;
+  editComponent: (key: string, component: SerializedComponent) => Promise<void>;
   saveForm: (form: SerializedForm) => Promise<SerializedForm>;
 }
 

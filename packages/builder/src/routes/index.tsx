@@ -1,7 +1,5 @@
 import {
-  FormComponent,
   SerializedComponent,
-  SerializedComponentsList,
   SerializedForm,
   StatefulFormView,
 } from "@fab4m/fab4m";
@@ -22,23 +20,23 @@ import {
 } from "react-router-dom";
 import { Plugins } from "..";
 import { ActionCreatorArgs, LoaderCreatorArgs } from "../router";
-import { invariantReturn, unserializeForm } from "../util";
+import {
+  draggableItems,
+  findKey,
+  invariantReturn,
+  unserializeForm,
+} from "../util";
 import styles from "../styles";
 import {
   DndContext,
-  closestCenter,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
   DragEndEvent,
-  DragOverEvent,
   MeasuringStrategy,
   UniqueIdentifier,
-  CollisionDetection,
   DragOverlay,
-  pointerWithin,
-  rectIntersection,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -130,7 +128,7 @@ export default function FormBuilder(props: { plugins: Plugins }) {
           >
             <Components
               items={items}
-              parent="root||"
+              parent="root:"
               outlet={outlet}
               activeItem={activeItem}
             />
@@ -174,7 +172,7 @@ function Components(props: ComponentsProps) {
             header={
               <>
                 {component.type !== "pagebreak" ? (
-                  <Link to={`edit/${component.name}`} className="block">
+                  <Link to={`edit/${key}`} className="block">
                     {component.label ?? component.name}
                   </Link>
                 ) : (
@@ -183,7 +181,7 @@ function Components(props: ComponentsProps) {
               </>
             }
           >
-            {params.component === component.name && (
+            {params.component === key && (
               <div className="border -mt-1 dark:border-slate-600 p-3 pl-5 dark:bg-slate-800">
                 {props.outlet}
               </div>
@@ -191,14 +189,19 @@ function Components(props: ComponentsProps) {
             {component.type === "group" && props.activeItem !== key && (
               <div className="border -mt-3 dark:border-slate-600 p-3 pl-5 dark:bg-slate-800">
                 <Components
-                  parent={component.name ?? ""}
+                  parent={component.name ? `${component.name}:` : ""}
                   items={props.items}
                   outlet={props.outlet}
                   activeItem={props.activeItem}
                 />
-                <Link to={`/new?parent=${key}`} className={styles.primaryBtn}>
-                  {t("newComponent")}
-                </Link>
+                <div className="mt-6">
+                  <Link
+                    to={`/new?parent=${key}`}
+                    className={`${styles.primaryBtn}`}
+                  >
+                    {t("newComponent")}
+                  </Link>
+                </div>
               </div>
             )}
           </SortableItem>
@@ -206,7 +209,6 @@ function Components(props: ComponentsProps) {
       );
     }
   }
-
   return (
     <div>
       <SortableContext
@@ -238,48 +240,3 @@ export const Item = forwardRef<HTMLDivElement, { title: string }>(
     );
   }
 );
-
-function draggableItems(
-  items: SerializedComponentsList,
-  parent: string = "root||",
-  result: Map<string, SerializedComponent> = new Map()
-) {
-  for (const item of items) {
-    if (!Array.isArray(item) && item) {
-      result.set(`${parent}${item.name}`, item);
-      if (item.components) {
-        draggableItems(
-          item.components,
-          `${parent !== "root||" ? parent : ""}${item.name}||`,
-          result
-        );
-      }
-    }
-  }
-  return result;
-}
-
-function findKey(
-  components: SerializedComponentsList,
-  key: string
-): [SerializedComponentsList, number] | [null, -1] {
-  if (key.startsWith("root||")) {
-    key = key.split("root||")[1];
-  } else {
-    const parts = key.split("||");
-
-    for (const part of parts.slice(0, parts.length - 1)) {
-      const node = components.find((c) => !Array.isArray(c) && c.name === part);
-      if (node && !Array.isArray(node) && node.components) {
-        components = node.components;
-      } else {
-        return [null, -1];
-      }
-    }
-    key = parts[parts.length - 1];
-  }
-  const index = components.findIndex(
-    (c) => !Array.isArray(c) && c.name === key
-  );
-  return [components, index];
-}
