@@ -10,12 +10,12 @@
 *** DONE File upload
 *** DONE Float
 *** DONE Date
-*** Groups
+*** DONE Groups
 *** DONE Page break
 *** DONE URL
 *** Password
 ** Widgets
-*** Details
+*** DONE Details
 *** Fieldset
 *** Horizontal group
 *** Radios

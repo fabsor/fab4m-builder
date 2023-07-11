@@ -32,7 +32,11 @@ import {
   pageBreakWidgetPlugin,
 } from "../../src/types/pagebreak";
 
-import { groupPlugin, groupWidgetPlugin } from "../../src/types/group";
+import {
+  groupPlugin,
+  groupWidgetPlugin,
+  detailsWidgetPlugin,
+} from "../../src/types/group";
 
 import {
   dateFieldPlugin,
@@ -83,6 +87,7 @@ const FormBuilder = formBuilder(
       pageBreakWidgetPlugin,
       linkFieldWidgetPlugin,
       groupWidgetPlugin,
+      detailsWidgetPlugin,
     ],
     validators: [minValidatorPlugin, existsValidatorPlugin],
   },
