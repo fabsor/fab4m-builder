@@ -11,11 +11,11 @@ export default function SortableItem(props: {
   const id = `${props.parent}${props.name}`;
   const { active, attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
-
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
+
   return (
     <article
       ref={setNodeRef}
@@ -27,6 +27,7 @@ export default function SortableItem(props: {
         <div
           className={`${styles.insetBtn} w-10 text-l text-center mr-2 cursor-move`}
           {...listeners}
+          aria-label="move"
         >
           &#8645;
         </div>

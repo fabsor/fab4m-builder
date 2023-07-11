@@ -110,19 +110,20 @@ export default function FormBuilder(props: { plugins: Plugins }) {
       );
     }
   }
+  console.log(fetcher.state);
   const outlet = <Outlet context={{ plugins: props.plugins }} />;
   return (
     <main className="lg:grid grid-cols-8 gap-5 min-h-screen">
-      <section className="col-span-6 p-4">
+      <section className="col-span-6 p-4 relative">
+        {fetcher.state === "submitting" && (
+          <div className="absolute h-full w-full dark:bg-slate-900 flex justify-center dark:text-white text-3xl">
+            Loading...
+          </div>
+        )}
         <h2 className={styles.h2}>{t("components")}</h2>
         <div className="mb-6">
           <DndContext
             sensors={sensors}
-            measuring={{
-              droppable: {
-                strategy: MeasuringStrategy.Always,
-              },
-            }}
             onDragStart={(e) => setActive(e.active.id)}
             onDragEnd={handleDragEnd}
           >
@@ -132,6 +133,14 @@ export default function FormBuilder(props: { plugins: Plugins }) {
               outlet={outlet}
               activeItem={activeItem}
             />
+            {createPortal(
+              <DragOverlay>
+                {activeItem ? (
+                  <Item title={items.get(activeItem)?.label ?? ""}></Item>
+                ) : null}
+              </DragOverlay>,
+              document.body
+            )}
           </DndContext>
         </div>
         <a href="new" className={styles.primaryBtn}>
@@ -186,7 +195,7 @@ function Components(props: ComponentsProps) {
                 {props.outlet}
               </div>
             )}
-            {component.type === "group" && props.activeItem !== key && (
+            {component.type === "group" && (
               <div className="border -mt-3 dark:border-slate-600 p-3 pl-5 dark:bg-slate-800">
                 <Components
                   parent={component.name ? `${component.name}:` : ""}
@@ -219,14 +228,6 @@ function Components(props: ComponentsProps) {
       >
         {renderedItems}
       </SortableContext>
-      {createPortal(
-        <DragOverlay>
-          {props.activeItem ? (
-            <Item title={props.items.get(props.activeItem)?.label ?? ""}></Item>
-          ) : null}
-        </DragOverlay>,
-        document.body
-      )}
     </div>
   );
 }
