@@ -36,6 +36,8 @@ import {
   groupPlugin,
   groupWidgetPlugin,
   detailsWidgetPlugin,
+  fieldsetWidgetPlugin,
+  horizontalGroupWidgetPlugin,
 } from "../../src/types/group";
 
 import {
@@ -88,6 +90,8 @@ const FormBuilder = formBuilder(
       linkFieldWidgetPlugin,
       groupWidgetPlugin,
       detailsWidgetPlugin,
+      fieldsetWidgetPlugin,
+      horizontalGroupWidgetPlugin,
     ],
     validators: [minValidatorPlugin, existsValidatorPlugin],
   },

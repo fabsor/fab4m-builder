@@ -16,8 +16,8 @@
 *** Password
 ** Widgets
 *** DONE Details
-*** Fieldset
-*** Horizontal group
+*** DONE Fieldset*
+*** DONE Horizontal group
 *** Radios
 *** Select
 *** Text area

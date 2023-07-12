@@ -47,6 +47,7 @@ export function action({
       request,
       currentForm
     );
+    component.components = currentComponent.components;
     await storage.editComponent(params.component, component);
     return redirect("../..");
   };

@@ -7,6 +7,8 @@ import {
   DetailsSettings,
   textField,
   booleanField,
+  fieldsetWidgetType,
+  horizontalGroupWidgetType,
 } from "@fab4m/fab4m";
 import { FormComponentTypePlugin, WidgetTypePlugin } from "src";
 import t from "../translations";
@@ -21,13 +23,20 @@ export const groupWidgetPlugin: WidgetTypePlugin = {
   type: groupWidgetType,
 };
 
+export const fieldsetWidgetPlugin: WidgetTypePlugin = {
+  type: fieldsetWidgetType,
+};
+
 export const detailsWidgetPlugin: WidgetTypePlugin<
   DetailsSettings<Record<string, unknown>>,
-  { summary?: string; open?: boolean }
+  { open?: boolean }
 > = {
   type: detailsWidgetType,
   editForm: () => ({
-    summary: textField({ label: t("summary") }),
     open: booleanField({ label: t("open") }),
   }),
+};
+
+export const horizontalGroupWidgetPlugin: WidgetTypePlugin = {
+  type: horizontalGroupWidgetType,
 };
