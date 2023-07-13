@@ -18,9 +18,9 @@
 *** DONE Details
 *** DONE Fieldset*
 *** DONE Horizontal group
-*** Radios
-*** Select
-*** Text area
+*** DONE Radios
+*** DONE Select
+*** DONE Text area
 *** Autocomplete
 ** Validators
 *** Allowed values

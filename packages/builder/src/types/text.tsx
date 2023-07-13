@@ -1,5 +1,10 @@
 import React from "react";
-import { textField, textFieldType, textFieldWidgetType } from "@fab4m/fab4m";
+import {
+  textAreaWidgetType,
+  textField,
+  textFieldType,
+  textFieldWidgetType,
+} from "@fab4m/fab4m";
 import { FormComponentTypePlugin, WidgetTypePlugin } from "src";
 
 export const textFieldPlugin: FormComponentTypePlugin = {
@@ -10,4 +15,8 @@ export const textFieldPlugin: FormComponentTypePlugin = {
 
 export const textFieldWidgetPlugin: WidgetTypePlugin<{ prefix?: string }> = {
   type: textFieldWidgetType,
+};
+
+export const textAreaWidgetPlugin: WidgetTypePlugin = {
+  type: textAreaWidgetType,
 };

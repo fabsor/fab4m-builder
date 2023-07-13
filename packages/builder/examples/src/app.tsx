@@ -15,7 +15,11 @@ import {
 import { formBuilder } from "../../src";
 import "react-datepicker/dist/react-datepicker.css";
 import "./index.css";
-import { textFieldPlugin, textFieldWidgetPlugin } from "../../src/types/text";
+import {
+  textFieldPlugin,
+  textFieldWidgetPlugin,
+  textAreaWidgetPlugin,
+} from "../../src/types/text";
 import {
   floatFieldPlugin,
   integerFieldPlugin,
@@ -98,6 +102,7 @@ const FormBuilder = formBuilder(
       horizontalGroupWidgetPlugin,
       selectWidgetPlugin,
       radiosWidgetPlugin,
+      textAreaWidgetPlugin,
     ],
     validators: [minValidatorPlugin, existsValidatorPlugin],
   },
