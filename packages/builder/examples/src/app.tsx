@@ -50,6 +50,10 @@ import {
   setLocales,
 } from "../../src/types/date";
 import { fileFieldPlugin, fileUploadWidgetPlugin } from "../../src/types/file";
+import {
+  selectWidgetPlugin,
+  radiosWidgetPlugin,
+} from "../../src/widgets/options";
 
 import { minValidatorPlugin } from "../../src/validators/numbers";
 import { existsValidatorPlugin } from "../../src/validators/exists";
@@ -92,6 +96,8 @@ const FormBuilder = formBuilder(
       detailsWidgetPlugin,
       fieldsetWidgetPlugin,
       horizontalGroupWidgetPlugin,
+      selectWidgetPlugin,
+      radiosWidgetPlugin,
     ],
     validators: [minValidatorPlugin, existsValidatorPlugin],
   },

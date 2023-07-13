@@ -63,6 +63,11 @@ export default function EditComponent() {
   const { plugin, component, currentForm } = useComponentInfo();
   const [data, changeData] = useState<Partial<ComponentData>>({});
   useEffect(() => {
+    const widgetPlugin = findPlugin(
+      component.widget.type,
+      context.plugins.widgets
+    );
+
     changeData({
       label: component.label,
       name: component.name,
@@ -91,7 +96,9 @@ export default function EditComponent() {
             : undefined,
         };
       }),
-      widgetSettings: component.widget.settings as Record<string, unknown>,
+      widgetSettings: widgetPlugin.formData
+        ? widgetPlugin.formData(component.widget.settings)
+        : (component.widget.settings as Record<string, unknown>),
     });
   }, [component.name]);
   const form = useForm(

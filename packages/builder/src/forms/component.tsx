@@ -69,7 +69,11 @@ export async function componentFromFormData(
     settings: undefined,
   });
   serializedComponent.settings = data.settings;
-  serializedComponent.widget.settings = data.widgetSettings;
+  if (data.widgetSettings) {
+    serializedComponent.widget.settings = widget.settingsFromForm
+      ? widget.settingsFromForm(data.widgetSettings)
+      : data.widgetSettings;
+  }
   serializedComponent.validators = data.validators.map((validator) => {
     const plugin = findPlugin(validator.type, plugins.validators);
     return {
