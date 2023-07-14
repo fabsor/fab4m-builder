@@ -1,5 +1,6 @@
 import {
   allowedValuesValidator,
+  disallowedValuesValidator,
   textAreaField,
   textField,
   ValuesSettings,
@@ -18,5 +19,19 @@ export const allowedValuesValidatorPlugin: ValidatorTypePlugin<
       label: t("allowedValues.message"),
     }),
     values: textField({ multiple: true, label: t("allowedValues.items") }),
+  }),
+};
+
+export const disallowedValuesValidatorPlugin: ValidatorTypePlugin<
+  ValuesSettings,
+  { message: string; values: string[] }
+> = {
+  type: disallowedValuesValidator,
+  editForm: () => ({
+    message: textAreaField({
+      required: true,
+      label: t("disallowedValues.message"),
+    }),
+    values: textField({ multiple: true, label: t("disallowedValues.items") }),
   }),
 };

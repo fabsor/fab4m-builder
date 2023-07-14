@@ -24,7 +24,7 @@
 *** DONE Autocomplete
 ** Validators
 *** DONE Allowed values
-*** TODO Disallowed values
+*** DONE Disallowed values
 *** TODO Equals
 *** TODO Exists
 *** TODO File extensions

@@ -62,7 +62,10 @@ import {
 import { autocompleteWidgetPlugin } from "../../src/widgets/autocomplete";
 import { minValidatorPlugin } from "../../src/validators/numbers";
 import { existsValidatorPlugin } from "../../src/validators/exists";
-import { allowedValuesValidatorPlugin } from "../../src/validators/allowed";
+import {
+  allowedValuesValidatorPlugin,
+  disallowedValuesValidatorPlugin,
+} from "../../src/validators/values";
 
 import "@fab4m/fab4m/css/basic/basic.css";
 import { localFormStorage } from "../../src/localstorage";
@@ -112,6 +115,7 @@ const FormBuilder = formBuilder(
       minValidatorPlugin,
       existsValidatorPlugin,
       allowedValuesValidatorPlugin,
+      disallowedValuesValidatorPlugin,
     ],
   },
   localFormStorage("form", serialize(form))
