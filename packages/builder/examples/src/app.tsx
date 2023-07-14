@@ -66,7 +66,10 @@ import {
   allowedValuesValidatorPlugin,
   disallowedValuesValidatorPlugin,
 } from "../../src/validators/values";
-
+import {
+  minLengthValidatorPlugin,
+  maxLengthValidatorPlugin,
+} from "../../src/validators/length";
 import "@fab4m/fab4m/css/basic/basic.css";
 import { localFormStorage } from "../../src/localstorage";
 import sv from "date-fns/locale/sv";
@@ -116,6 +119,8 @@ const FormBuilder = formBuilder(
       existsValidatorPlugin,
       allowedValuesValidatorPlugin,
       disallowedValuesValidatorPlugin,
+      minLengthValidatorPlugin,
+      maxLengthValidatorPlugin,
     ],
   },
   localFormStorage("form", serialize(form))

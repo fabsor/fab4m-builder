@@ -25,11 +25,11 @@
 ** Validators
 *** DONE Allowed values
 *** DONE Disallowed values
-*** TODO Equals
-*** TODO Exists
+*** DONE Equals
+*** DONE Exists
 *** TODO File extensions
 *** TODO Max file size
-*** TODO maximal length
-*** TODO Min value
-*** TODO minimal length
+*** DONE maximal length
+*** DONE Min value
+*** DONE minimal length
 ** Rule groups
