@@ -21,15 +21,15 @@
 *** DONE Radios
 *** DONE Select
 *** DONE Text area
-*** Autocomplete
+*** DONE Autocomplete
 ** Validators
-*** Allowed values
-*** Disallowed values
-*** Equals
-*** Exists
-*** File extensions
-*** Max file size
-*** maximal length
-*** Min value
-*** minimal length
+*** DONE Allowed values
+*** TODO Disallowed values
+*** TODO Equals
+*** TODO Exists
+*** TODO File extensions
+*** TODO Max file size
+*** TODO maximal length
+*** TODO Min value
+*** TODO minimal length
 ** Rule groups

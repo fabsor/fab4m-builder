@@ -201,7 +201,7 @@ export function componentForm(args: {
                   {
                     label: plugin.type.title,
                   },
-                  plugin.editForm
+                  plugin.editForm()
                 ),
               ];
             }),
