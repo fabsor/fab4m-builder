@@ -13,13 +13,13 @@ import {
 import { WidgetTypePlugin } from "src";
 import t from "../translations";
 
-function optionsToText(options: Options<string>) {
+function optionsToText(options: Options<string> | Option<string>[]) {
   return options
     .map((option) => (Array.isArray(option) ? option.join("|") : option))
     .join("\n");
 }
 
-function textToOptions(text: string): Option<string>[] {
+export function textToOptions(text: string): Option<string>[] {
   return text.split("\n").map((row) => {
     if (row.includes("|")) {
       const split = row.split("|");

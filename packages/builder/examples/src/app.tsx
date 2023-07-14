@@ -14,6 +14,7 @@ import {
 } from "@fab4m/fab4m";
 import { formBuilder } from "../../src";
 import "react-datepicker/dist/react-datepicker.css";
+import "@fab4m/autocomplete/src/style.css";
 import "./index.css";
 import {
   textFieldPlugin,
@@ -58,7 +59,7 @@ import {
   selectWidgetPlugin,
   radiosWidgetPlugin,
 } from "../../src/widgets/options";
-
+import { autocompleteWidgetPlugin } from "../../src/widgets/autocomplete";
 import { minValidatorPlugin } from "../../src/validators/numbers";
 import { existsValidatorPlugin } from "../../src/validators/exists";
 import "@fab4m/fab4m/css/basic/basic.css";
@@ -103,6 +104,7 @@ const FormBuilder = formBuilder(
       selectWidgetPlugin,
       radiosWidgetPlugin,
       textAreaWidgetPlugin,
+      autocompleteWidgetPlugin,
     ],
     validators: [minValidatorPlugin, existsValidatorPlugin],
   },
