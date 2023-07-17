@@ -13,7 +13,7 @@
 *** DONE Groups
 *** DONE Page break
 *** DONE URL
-*** Password
+
 ** Widgets
 *** DONE Details
 *** DONE Fieldset*
@@ -32,4 +32,16 @@
 *** DONE maximal length
 *** DONE Min value
 *** DONE minimal length
+** Fixes
+*** TODO Group in groups
+*** TODO Overlay dialog?
+*** TODO Mobile
+*** TODO Icons
+*** TODO Translations
+*** TODO Laggy dnd
+*** TODO Delete component
+*** TODO Theme switcher
+*** TODO Form title and description
+* Next version
 ** Rule groups
+** Password
