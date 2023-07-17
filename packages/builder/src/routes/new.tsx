@@ -6,7 +6,7 @@ import {
   useLocation,
   useOutletContext,
 } from "react-router-dom";
-import { findComponentFromKey, findKey, findPlugin } from "../util";
+import { findComponentFromKey, findPlugin } from "../util";
 import { FormBuilderContext, RouteArgs } from "../router";
 import styles from "../styles";
 import { serializeComponent, SerializedComponentsList } from "@fab4m/fab4m";
