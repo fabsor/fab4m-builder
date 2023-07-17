@@ -34,14 +34,16 @@
 *** DONE minimal length
 ** Fixes
 *** TODO Group in groups
+*** TODO Delete component
 *** TODO Overlay dialog?
-*** TODO Mobile
+*** TODO Light/Dark setting?
 *** TODO Icons
 *** TODO Translations
 *** TODO Laggy dnd
-*** TODO Delete component
 *** TODO Theme switcher
+*** TODO Mobile
 *** TODO Form title and description
+*** TODO Tests?
 * Next version
 ** Rule groups
 ** Password
