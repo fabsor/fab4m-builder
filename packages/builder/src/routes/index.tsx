@@ -171,8 +171,9 @@ interface ComponentsProps {
 function Components(props: ComponentsProps) {
   const renderedItems: JSX.Element[] = [];
   const params = useParams();
+  console.log(props.parent);
   for (const [key, component] of props.items.entries()) {
-    if (key.startsWith(props.parent)) {
+    if (key === `${props.parent}${component.name}`) {
       renderedItems.push(
         <React.Fragment key={key}>
           <SortableItem
@@ -198,7 +199,11 @@ function Components(props: ComponentsProps) {
             {component.type === "group" && (
               <div className="border -mt-3 dark:border-slate-600 p-3 pl-5 dark:bg-slate-800">
                 <Components
-                  parent={component.name ? `${component.name}:` : ""}
+                  parent={
+                    props.parent !== "root:"
+                      ? `${props.parent}${component.name}:`
+                      : `${component.name}:`
+                  }
                   items={props.items}
                   outlet={props.outlet}
                   activeItem={props.activeItem}
