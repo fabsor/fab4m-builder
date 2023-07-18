@@ -7,6 +7,7 @@ import {
   SerializedComponent,
   ValidatorType,
   FormComponent,
+  Theme,
 } from "@fab4m/fab4m";
 import { createBrowserRouter } from "react-router-dom";
 import { FormBuilder } from "./components/FormBuilder";
@@ -54,8 +55,12 @@ export interface Plugins {
   validators: ValidatorTypePlugin[];
 }
 
-export function formBuilder(plugins: Plugins, storage: FormStorage) {
-  const router = createBrowserRouter(routes({ plugins, storage }));
+export function formBuilder(
+  plugins: Plugins,
+  storage: FormStorage,
+  themes: Theme[]
+) {
+  const router = createBrowserRouter(routes({ plugins, storage, themes }));
   return <FormBuilder router={router} />;
 }
 

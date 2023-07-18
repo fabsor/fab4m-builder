@@ -1,8 +1,8 @@
 import {
-  Form,
   SerializedComponent,
   SerializedForm,
   StatefulFormView,
+  Theme,
 } from "@fab4m/fab4m";
 import React, { forwardRef, useCallback, useRef, useState } from "react";
 import t from "../translations";
@@ -46,6 +46,8 @@ import {
 } from "@dnd-kit/sortable";
 import SortableItem from "../components/SortableItem";
 import { createPortal } from "react-dom";
+import { StatefulFormRoute } from "@fab4m/routerforms";
+import { useFormSettingsForm } from "../forms/form";
 
 export function loader({ storage }: LoaderCreatorArgs) {
   return () => {
@@ -57,14 +59,6 @@ export function action({ storage }: ActionCreatorArgs): ActionFunction {
   return async ({ request }) => {
     const data = await request.formData();
     const form = await storage.loadForm();
-    if (data.has("delete")) {
-      const keyToDelete = invariantReturn(data.get("delete")).toString();
-      const [sourceList, sourceIndex] = findKey(form.components, keyToDelete);
-      if (sourceList) {
-        sourceList.splice(sourceIndex, 1);
-      }
-      return await storage.saveForm(form);
-    }
     const from = invariantReturn(data.get("from")).toString();
     const to = invariantReturn(data.get("to")).toString();
     const [sourceList, sourceIndex] = findKey(form.components, from);
@@ -92,7 +86,10 @@ export function action({ storage }: ActionCreatorArgs): ActionFunction {
   };
 }
 
-export default function FormBuilder(props: { plugins: Plugins }) {
+export default function FormBuilder(props: {
+  plugins: Plugins;
+  themes: Theme[];
+}) {
   const form = useLoaderData() as SerializedForm;
   const params = useParams();
   const fetcher = useFetcher();
@@ -118,6 +115,7 @@ export default function FormBuilder(props: { plugins: Plugins }) {
       );
     }
   }
+
   const outlet = <Outlet context={{ plugins: props.plugins }} />;
   return (
     <main className="lg:grid grid-cols-8 gap-5 min-h-screen">
@@ -127,6 +125,10 @@ export default function FormBuilder(props: { plugins: Plugins }) {
             Loading...
           </div>
         )}
+        <StatefulFormRoute
+          form={useFormSettingsForm(props.themes)}
+          useRouteAction={true}
+        />
         <h2 className={styles.h2}>{t("components")}</h2>
         <div className="mb-6">
           <DndContext

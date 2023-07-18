@@ -11,6 +11,8 @@ import {
   useForm,
   serialize,
   groupWidgetType,
+  basicDark,
+  tailwind,
 } from "@fab4m/fab4m";
 import { formBuilder } from "../../src";
 import "react-datepicker/dist/react-datepicker.css";
@@ -73,7 +75,7 @@ import {
 import "@fab4m/fab4m/css/basic/basic.css";
 import { localFormStorage } from "../../src/localstorage";
 import sv from "date-fns/locale/sv";
-
+setDefaultTheme(tailwind);
 setLocales([sv]);
 
 const form = createForm({
@@ -123,7 +125,8 @@ const FormBuilder = formBuilder(
       maxLengthValidatorPlugin,
     ],
   },
-  localFormStorage("form", serialize(form))
+  localFormStorage("form", serialize(form)),
+  [basic, basicDark, tailwind]
 );
 
 export default function App() {
