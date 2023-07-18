@@ -6,6 +6,7 @@ export default function SortableItem(props: {
   name: string;
   parent: string;
   header: React.ReactNode;
+  actions?: React.ReactNode;
   children: React.ReactNode;
 }) {
   const id = `${props.parent}${props.name}`;
@@ -31,7 +32,8 @@ export default function SortableItem(props: {
         >
           &#8645;
         </div>
-        <h3 className="grow my-auto">{props.header}</h3>
+        <h3 className="grow my-auto text-small">{props.header}</h3>
+        {props.actions && <div className="ml-2 flex">{props.actions}</div>}
       </header>
       <div>{props.children}</div>
     </article>

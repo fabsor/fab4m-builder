@@ -1,4 +1,5 @@
 import {
+  Form,
   SerializedComponent,
   SerializedForm,
   StatefulFormView,
@@ -17,6 +18,7 @@ import {
   useNavigate,
   useParams,
   useSubmit,
+  Form as RouterForm,
 } from "react-router-dom";
 import { Plugins } from "..";
 import { ActionCreatorArgs, LoaderCreatorArgs } from "../router";
@@ -34,7 +36,6 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-  MeasuringStrategy,
   UniqueIdentifier,
   DragOverlay,
 } from "@dnd-kit/core";
@@ -45,7 +46,6 @@ import {
 } from "@dnd-kit/sortable";
 import SortableItem from "../components/SortableItem";
 import { createPortal } from "react-dom";
-import invariant from "tiny-invariant";
 
 export function loader({ storage }: LoaderCreatorArgs) {
   return () => {
@@ -57,6 +57,14 @@ export function action({ storage }: ActionCreatorArgs): ActionFunction {
   return async ({ request }) => {
     const data = await request.formData();
     const form = await storage.loadForm();
+    if (data.has("delete")) {
+      const keyToDelete = invariantReturn(data.get("delete")).toString();
+      const [sourceList, sourceIndex] = findKey(form.components, keyToDelete);
+      if (sourceList) {
+        sourceList.splice(sourceIndex, 1);
+      }
+      return await storage.saveForm(form);
+    }
     const from = invariantReturn(data.get("from")).toString();
     const to = invariantReturn(data.get("to")).toString();
     const [sourceList, sourceIndex] = findKey(form.components, from);
@@ -110,7 +118,6 @@ export default function FormBuilder(props: { plugins: Plugins }) {
       );
     }
   }
-  console.log(fetcher.state);
   const outlet = <Outlet context={{ plugins: props.plugins }} />;
   return (
     <main className="lg:grid grid-cols-8 gap-5 min-h-screen">
@@ -171,7 +178,6 @@ interface ComponentsProps {
 function Components(props: ComponentsProps) {
   const renderedItems: JSX.Element[] = [];
   const params = useParams();
-  console.log(props.parent);
   for (const [key, component] of props.items.entries()) {
     if (key === `${props.parent}${component.name}`) {
       renderedItems.push(
@@ -181,13 +187,24 @@ function Components(props: ComponentsProps) {
             parent={props.parent}
             header={
               <>
-                {component.type !== "pagebreak" ? (
-                  <Link to={`edit/${key}`} className="block">
-                    {component.label ?? component.name}
+                {component.type !== "pagebreak"
+                  ? component.label ?? component.name
+                  : t("pageBreak")}
+              </>
+            }
+            actions={
+              <>
+                {component.type !== "pagebreak" && (
+                  <Link to={`edit/${key}`} className={`${styles.insetBtn}`}>
+                    Edit
                   </Link>
-                ) : (
-                  t("pageBreak")
                 )}
+                <Link
+                  to={`delete/${key}`}
+                  className={`ml-2 ${styles.insetBtn}`}
+                >
+                  Delete
+                </Link>
               </>
             }
           >
@@ -196,7 +213,7 @@ function Components(props: ComponentsProps) {
                 {props.outlet}
               </div>
             )}
-            {component.type === "group" && (
+            {component.type === "group" && params.component !== key && (
               <div className="border -mt-3 dark:border-slate-600 p-3 pl-5 dark:bg-slate-800">
                 <Components
                   parent={
@@ -208,14 +225,16 @@ function Components(props: ComponentsProps) {
                   outlet={props.outlet}
                   activeItem={props.activeItem}
                 />
-                <div className="mt-6">
-                  <Link
-                    to={`/new?parent=${key}`}
-                    className={`${styles.primaryBtn}`}
-                  >
-                    {t("newComponent")}
-                  </Link>
-                </div>
+                {params.component !== key && (
+                  <div className="mt-6">
+                    <Link
+                      to={`/new?parent=${key}`}
+                      className={`${styles.primaryBtn}`}
+                    >
+                      {t("newComponent")}
+                    </Link>
+                  </div>
+                )}
               </div>
             )}
           </SortableItem>

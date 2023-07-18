@@ -4,6 +4,7 @@ import { FormStorage, Plugins } from ".";
 import * as root from "./routes";
 import * as EditComponent from "./routes/edit_$component";
 import * as NewComponent from "./routes/new";
+import * as DeleteComponent from "./routes/delete_$component";
 import Overlay from "./components/Overlay";
 
 export interface RouteArgs {
@@ -28,6 +29,17 @@ export function routes(args: RouteArgs): RouteObject[] {
           action: EditComponent.action(args),
           element: <EditComponent.default />,
         },
+        {
+          element: <Overlay />,
+          children: [
+            {
+              path: "delete/:component",
+              action: DeleteComponent.action(args),
+              element: <DeleteComponent.default />,
+            },
+          ],
+        },
+
         {
           element: <Overlay />,
           children: [

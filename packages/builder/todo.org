@@ -33,8 +33,9 @@
 *** DONE Min value
 *** DONE minimal length
 ** Fixes
-*** TODO Group in groups
-*** TODO Delete component
+*** DONE Group in groups
+*** DONE Remove children on edit
+*** DONE Delete component
 *** TODO Overlay dialog?
 *** TODO Light/Dark setting?
 *** TODO Icons
