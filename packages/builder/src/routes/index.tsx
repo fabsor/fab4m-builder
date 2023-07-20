@@ -19,9 +19,14 @@ import {
   useParams,
   useSubmit,
   Form as RouterForm,
+  useOutletContext,
 } from "react-router-dom";
 import { Plugins } from "..";
-import { ActionCreatorArgs, LoaderCreatorArgs } from "../router";
+import {
+  ActionCreatorArgs,
+  FormBuilderContext,
+  LoaderCreatorArgs,
+} from "../router";
 import {
   draggableItems,
   findKey,
@@ -116,19 +121,24 @@ export default function FormBuilder(props: {
     }
   }
 
-  const outlet = <Outlet context={{ plugins: props.plugins }} />;
+  const outlet = (
+    <Outlet context={{ plugins: props.plugins, themes: props.themes }} />
+  );
   return (
     <main className="lg:grid grid-cols-8 gap-5 min-h-screen">
       <section className="col-span-6 p-4 relative">
+        <h1 className={styles.h1}>{t("editForm")}</h1>
         {fetcher.state === "submitting" && (
           <div className="absolute h-full w-full dark:bg-slate-900 flex justify-center dark:text-white text-3xl">
             Loading...
           </div>
         )}
-        <StatefulFormRoute
-          form={useFormSettingsForm(props.themes)}
-          useRouteAction={true}
-        />
+        <Link
+          className={`${styles.primaryBtn} mb-4 inline-block`}
+          to="settings"
+        >
+          {t("formSettings")}
+        </Link>
         <h2 className={styles.h2}>{t("components")}</h2>
         <div className="mb-6">
           <DndContext
@@ -162,7 +172,7 @@ export default function FormBuilder(props: {
         <div>
           <StatefulFormView
             hideSubmit={true}
-            form={unserializeForm(form, props.plugins)}
+            form={unserializeForm(form, props.plugins, props.themes)}
           />
         </div>
       </section>
@@ -267,3 +277,7 @@ export const Item = forwardRef<HTMLDivElement, { title: string }>(
     );
   }
 );
+
+export function useFormBuilderContext() {
+  return useOutletContext<FormBuilderContext>();
+}

@@ -18,44 +18,39 @@ export interface FormSettings {
   labels: Labels;
 }
 
-export function useFormSettingsForm(themes: Theme[]) {
-  return useForm(
-    () =>
-      createForm({
-        title: textField({
-          label: t("formsettings.title"),
+export function formSettingsForm(themes: Theme[]) {
+  return createForm({
+    theme: textField({
+      label: t("formsettings.theme"),
+      widget: selectWidget(themes.map((theme) => theme.name)),
+    }),
+    labels: group<Labels>(
+      {
+        label: t("formsettings.labels"),
+        widget: detailsWidget(),
+      },
+      {
+        submit: textField({
+          label: t("formsettings.submit"),
+          required: true,
         }),
-        description: textAreaField({
-          label: t("formsettings.description"),
+        next: textField({
+          label: t("formsettings.next"),
+          required: true,
         }),
-        theme: textField({
-          label: t("formsettings.theme"),
-          widget: selectWidget(themes.map((theme) => theme.name)),
+        previous: textField({
+          label: t("formsettings.previous"),
+          required: true,
         }),
-        labels: group<Labels>(
-          {
-            label: t("formsettings.labels"),
-            widget: detailsWidget(),
-          },
-          {
-            submit: textField({
-              label: t("formsettings.submit"),
-            }),
-            next: textField({
-              label: t("formsettings.next"),
-            }),
-            previous: textField({
-              label: t("formsettings.previous"),
-            }),
-            complete: textField({
-              label: t("formsettings.complete"),
-            }),
-            required: textField({
-              label: t("formsettings.required"),
-            }),
-          }
-        ),
-      }),
-    [themes]
-  );
+        complete: textField({
+          label: t("formsettings.complete"),
+          required: true,
+        }),
+        required: textField({
+          label: t("formsettings.required"),
+          required: true,
+        }),
+      }
+    ),
+  });
 }

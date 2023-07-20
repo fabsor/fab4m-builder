@@ -13,6 +13,7 @@ import { findComponentFromKey, findPlugin } from "../util";
 import { FormRoute } from "@fab4m/routerforms";
 import { componentForm, componentFromFormData } from "../forms/component";
 import { ActionCreatorArgs, FormBuilderContext } from "src/router";
+import { useFormBuilderContext } from ".";
 
 interface ComponentData {
   label: string;
@@ -125,7 +126,7 @@ export default function EditComponent() {
 
 function useComponentInfo() {
   const params = useParams<{ component: string }>();
-  const context = useOutletContext<FormBuilderContext>();
+  const context = useFormBuilderContext();
   invariant(params.component);
   const form = useRouteLoaderData("root") as SerializedForm;
   const component = findComponentFromKey(form.components, params.component);

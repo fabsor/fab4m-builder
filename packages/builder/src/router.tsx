@@ -5,6 +5,7 @@ import * as root from "./routes";
 import * as EditComponent from "./routes/edit_$component";
 import * as NewComponent from "./routes/new";
 import * as DeleteComponent from "./routes/delete_$component";
+import * as SettingsComponent from "./routes/settings";
 import Overlay from "./components/Overlay";
 import { Theme } from "@fab4m/fab4m";
 
@@ -41,7 +42,16 @@ export function routes(args: RouteArgs): RouteObject[] {
             },
           ],
         },
-
+        {
+          element: <Overlay />,
+          children: [
+            {
+              path: "settings",
+              action: SettingsComponent.action(args),
+              element: <SettingsComponent.default />,
+            },
+          ],
+        },
         {
           element: <Overlay />,
           children: [
@@ -59,4 +69,5 @@ export function routes(args: RouteArgs): RouteObject[] {
 
 export interface FormBuilderContext {
   plugins: Plugins;
+  themes: Theme[];
 }

@@ -1,6 +1,7 @@
 import { tailwind } from "@fab4m/fab4m";
 
 export default {
+  h1: "text-4xl font-bold mb-5 dark:text-gray-200",
   h2: "text-3xl font-bold mb-4 dark:text-gray-200",
   item: "text-xl font-bold mb-2 border px-4 py-2 bg-slate-100 rounded border-slate-300 dark:border-slate-500 hover:bg-slate-200 flex dark:bg-slate-700 dark:border-slate-500 dark:text-gray-200 dark:hover:bg-slate-600",
   insetBtn:
@@ -9,4 +10,5 @@ export default {
   primaryBtn: `${tailwind.classes.submitButton} dark:border-emerald-600 border`,
   dangerBtn: `bg-red-600 font-bold text-white p-2 rounded block hover:bg-red-700`,
   smallText: "text-xs dark:text-slate-200",
+  link: "text-emerald-500 underline font-bold hover:text-emerald-200",
 };

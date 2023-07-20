@@ -126,7 +126,7 @@ const FormBuilder = formBuilder(
     ],
   },
   localFormStorage("form", serialize(form)),
-  [basic, basicDark, tailwind]
+  [basic, basicDark, tailwind, bulma]
 );
 
 export default function App() {
