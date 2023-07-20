@@ -53,14 +53,9 @@ export function routes(args: RouteArgs): RouteObject[] {
           ],
         },
         {
-          element: <Overlay />,
-          children: [
-            {
-              path: "new",
-              action: NewComponent.action(args),
-              element: <NewComponent.default />,
-            },
-          ],
+          path: "new",
+          action: NewComponent.action(args),
+          element: <NewComponent.default />,
         },
       ],
     },

@@ -98,6 +98,7 @@ export default function FormBuilder(props: {
   const form = useLoaderData() as SerializedForm;
   const params = useParams();
   const fetcher = useFetcher();
+  const location = useLocation();
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const items = draggableItems(form.components);
   function setActive(id: UniqueIdentifier) {
@@ -162,9 +163,11 @@ export default function FormBuilder(props: {
             )}
           </DndContext>
         </div>
-        <a href="new" className={styles.primaryBtn}>
-          {t("newComponent")}
-        </a>
+        {location.pathname !== "/new" && (
+          <a href="/new" className={styles.primaryBtn}>
+            {t("newComponent")}
+          </a>
+        )}
         {!params.component && outlet}
       </section>
       <section className="col-span-2 border-l dark:border-slate-700 p-4 dark:bg-slate-800">

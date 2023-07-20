@@ -36,9 +36,9 @@
 *** DONE Group in groups
 *** DONE Remove children on edit
 *** DONE Delete component
-*** TODO Form title and description
-*** TODO Theme switcher
+*** DONE Theme switcher
 *** TODO Overlay dialog?
+*** TODO Notifications
 *** TODO Light/Dark setting?
 *** TODO Icons
 *** TODO Translations
