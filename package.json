@@ -4,6 +4,8 @@
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.20.5",
+    "@dnd-kit/sortable": "^7.0.2",
+    "@radix-ui/react-dialog": "^1.0.4",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@types/react": "^18.0.26",
@@ -41,11 +43,11 @@
     "vitest": "^0.25.3"
   },
   "dependencies": {
+    "@fab4m/autocomplete": "file:packages/autocomplete",
     "@fab4m/date": "file:packages/date",
     "@fab4m/fab4m": "file:packages/core",
     "@fab4m/password": "file:packages/password",
-    "@fab4m/routerforms": "file:packages/routerforms",
-    "@fab4m/autocomplete": "file:packages/autocomplete"
+    "@fab4m/routerforms": "file:packages/routerforms"
   },
   "scripts": {
     "bootstrap": "lerna bootstrap",
