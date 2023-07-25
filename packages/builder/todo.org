@@ -37,10 +37,10 @@
 *** DONE Remove children on edit
 *** DONE Delete component
 *** DONE Theme switcher
-*** TODO Overlay dialog?
+*** DONE Overlay dialog?
+*** DONE Light/Dark setting?
 *** TODO Notifications
-*** TODO Light/Dark setting?
-*** TODO Icons
+*** DONE Icons
 *** TODO Translations
 *** TODO Laggy dnd
 *** TODO Mobile

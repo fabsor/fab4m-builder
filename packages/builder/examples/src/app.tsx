@@ -74,16 +74,18 @@ import {
 } from "../../src/validators/length";
 import "@fab4m/fab4m/css/basic/basic.css";
 import { localFormStorage } from "../../src/localstorage";
+import defaultIcons from "../../src/defaultIcons";
+import { setIcons } from "../../src/icons";
 import sv from "date-fns/locale/sv";
 setDefaultTheme(tailwind);
 setLocales([sv]);
-
+setIcons(defaultIcons);
 const form = createForm({
   text: textField({ label: "Text" }),
 });
 
-const FormBuilder = formBuilder(
-  {
+const FormBuilder = formBuilder({
+  plugins: {
     types: [
       textFieldPlugin,
       integerFieldPlugin,
@@ -125,9 +127,9 @@ const FormBuilder = formBuilder(
       maxLengthValidatorPlugin,
     ],
   },
-  localFormStorage("form", serialize(form)),
-  [basic, basicDark, tailwind, bulma]
-);
+  storage: localFormStorage("form", serialize(form)),
+  themes: [basic, basicDark, tailwind, bulma],
+});
 
 export default function App() {
   return <div className="dark:bg-slate-900">{FormBuilder}</div>;

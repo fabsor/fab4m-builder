@@ -19,6 +19,11 @@ export function action({ storage, themes }: ActionCreatorArgs) {
     form.labels = data.labels;
     form.theme = data.theme;
     await storage.saveForm(form);
+    await storage.flash({
+      title: t("settingsSaved"),
+      description: t("formSettingsSaved"),
+      type: "success",
+    });
     return redirect("../..");
   };
 }

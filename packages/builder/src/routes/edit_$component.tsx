@@ -14,6 +14,7 @@ import { FormRoute } from "@fab4m/routerforms";
 import { componentForm, componentFromFormData } from "../forms/component";
 import { ActionCreatorArgs, FormBuilderContext } from "src/router";
 import { useFormBuilderContext } from ".";
+import t from "../translations";
 
 interface ComponentData {
   label: string;
@@ -50,6 +51,13 @@ export function action({
     );
     component.components = currentComponent.components;
     await storage.editComponent(params.component, component);
+    await storage.flash({
+      title: t("componentSaved"),
+      description: t("componentXSaved", {
+        component: component.label ?? component.name,
+      }),
+      type: "success",
+    });
     return redirect("../..");
   };
 }
@@ -128,7 +136,7 @@ function useComponentInfo() {
   const params = useParams<{ component: string }>();
   const context = useFormBuilderContext();
   invariant(params.component);
-  const form = useRouteLoaderData("root") as SerializedForm;
+  const { form } = useRouteLoaderData("root") as { form: SerializedForm };
   const component = findComponentFromKey(form.components, params.component);
 
   const plugin = findPlugin<FormComponentTypePlugin>(

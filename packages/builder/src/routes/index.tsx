@@ -21,7 +21,7 @@ import {
   Form as RouterForm,
   useOutletContext,
 } from "react-router-dom";
-import { Plugins } from "..";
+import { FlashMessage, Plugins } from "..";
 import {
   ActionCreatorArgs,
   FormBuilderContext,
@@ -51,12 +51,15 @@ import {
 } from "@dnd-kit/sortable";
 import SortableItem from "../components/SortableItem";
 import { createPortal } from "react-dom";
-import { StatefulFormRoute } from "@fab4m/routerforms";
-import { useFormSettingsForm } from "../forms/form";
+import { RxPencil2, RxTrash } from "react-icons/rx";
+import ToastMessage from "../components/Toasts";
 
 export function loader({ storage }: LoaderCreatorArgs) {
-  return () => {
-    return storage.loadForm();
+  return async () => {
+    return {
+      form: await storage.loadForm(),
+      message: await storage.getFlashMessage(true),
+    };
   };
 }
 
@@ -95,7 +98,10 @@ export default function FormBuilder(props: {
   plugins: Plugins;
   themes: Theme[];
 }) {
-  const form = useLoaderData() as SerializedForm;
+  const { form, message } = useLoaderData() as {
+    form: SerializedForm;
+    message: FlashMessage;
+  };
   const params = useParams();
   const fetcher = useFetcher();
   const location = useLocation();
@@ -126,59 +132,62 @@ export default function FormBuilder(props: {
     <Outlet context={{ plugins: props.plugins, themes: props.themes }} />
   );
   return (
-    <main className="lg:grid grid-cols-8 gap-5 min-h-screen">
-      <section className="col-span-6 p-4 relative">
-        <h1 className={styles.h1}>{t("editForm")}</h1>
-        {fetcher.state === "submitting" && (
-          <div className="absolute h-full w-full dark:bg-slate-900 flex justify-center dark:text-white text-3xl">
-            Loading...
-          </div>
-        )}
-        <Link
-          className={`${styles.primaryBtn} mb-4 inline-block`}
-          to="settings"
-        >
-          {t("formSettings")}
-        </Link>
-        <h2 className={styles.h2}>{t("components")}</h2>
-        <div className="mb-6">
-          <DndContext
-            sensors={sensors}
-            onDragStart={(e) => setActive(e.active.id)}
-            onDragEnd={handleDragEnd}
+    <main>
+      {message && <ToastMessage toast={message} />}
+      <div className="lg:grid grid-cols-8 gap-5 min-h-screen">
+        <section className="col-span-6 p-4 relative">
+          <h1 className={styles.h1}>{t("editForm")}</h1>
+          {fetcher.state === "submitting" && (
+            <div className="absolute h-full w-full dark:bg-slate-900 flex justify-center dark:text-white text-3xl">
+              Loading...
+            </div>
+          )}
+          <Link
+            className={`${styles.primaryBtn} mb-4 inline-block`}
+            to="settings"
           >
-            <Components
-              items={items}
-              parent="root:"
-              outlet={outlet}
-              activeItem={activeItem}
+            {t("formSettings")}
+          </Link>
+          <h2 className={styles.h2}>{t("components")}</h2>
+          <div className="mb-6">
+            <DndContext
+              sensors={sensors}
+              onDragStart={(e) => setActive(e.active.id)}
+              onDragEnd={handleDragEnd}
+            >
+              <Components
+                items={items}
+                parent="root:"
+                outlet={outlet}
+                activeItem={activeItem}
+              />
+              {createPortal(
+                <DragOverlay>
+                  {activeItem ? (
+                    <Item title={items.get(activeItem)?.label ?? ""}></Item>
+                  ) : null}
+                </DragOverlay>,
+                document.body
+              )}
+            </DndContext>
+          </div>
+          {location.pathname !== "/new" && (
+            <Link to="new" className={styles.primaryBtn}>
+              {t("newComponent")}
+            </Link>
+          )}
+          {!params.component && outlet}
+        </section>
+        <section className="col-span-2 border-l dark:border-slate-700 p-4 dark:bg-slate-800">
+          <h2 className={styles.h2}>Preview</h2>
+          <div>
+            <StatefulFormView
+              hideSubmit={true}
+              form={unserializeForm(form, props.plugins, props.themes)}
             />
-            {createPortal(
-              <DragOverlay>
-                {activeItem ? (
-                  <Item title={items.get(activeItem)?.label ?? ""}></Item>
-                ) : null}
-              </DragOverlay>,
-              document.body
-            )}
-          </DndContext>
-        </div>
-        {location.pathname !== "/new" && (
-          <a href="/new" className={styles.primaryBtn}>
-            {t("newComponent")}
-          </a>
-        )}
-        {!params.component && outlet}
-      </section>
-      <section className="col-span-2 border-l dark:border-slate-700 p-4 dark:bg-slate-800">
-        <h2 className={styles.h2}>Preview</h2>
-        <div>
-          <StatefulFormView
-            hideSubmit={true}
-            form={unserializeForm(form, props.plugins, props.themes)}
-          />
-        </div>
-      </section>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }
@@ -210,15 +219,20 @@ function Components(props: ComponentsProps) {
             actions={
               <>
                 {component.type !== "pagebreak" && (
-                  <Link to={`edit/${key}`} className={`${styles.insetBtn}`}>
-                    Edit
+                  <Link
+                    to={`edit/${key}`}
+                    className={`${styles.insetBtn} flex`}
+                  >
+                    <RxPencil2 className="mr-2 my-auto" />
+                    <span className="my-auto text-sm">Edit</span>
                   </Link>
                 )}
                 <Link
                   to={`delete/${key}`}
-                  className={`ml-2 ${styles.insetBtn}`}
+                  className={`ml-2 ${styles.insetBtn} flex`}
                 >
-                  Delete
+                  <RxTrash className="mr-1 my-auto" />
+                  <span className="my-auto text-sm">Delete</span>
                 </Link>
               </>
             }

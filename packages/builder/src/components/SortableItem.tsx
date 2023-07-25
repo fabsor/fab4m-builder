@@ -1,4 +1,5 @@
 import { useSortable } from "@dnd-kit/sortable";
+import { RxMove } from "react-icons/rx";
 import React from "react";
 import styles from "../styles";
 import { CSS } from "@dnd-kit/utilities";
@@ -30,7 +31,7 @@ export default function SortableItem(props: {
           {...listeners}
           aria-label="move"
         >
-          &#8645;
+          <RxMove className="mt-1" />
         </div>
         <h3 className="grow my-auto text-small">{props.header}</h3>
         {props.actions && <div className="ml-2 flex">{props.actions}</div>}

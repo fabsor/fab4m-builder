@@ -1,4 +1,3 @@
-import React from "react";
 import {
   content,
   contentType,
@@ -8,7 +7,6 @@ import {
 import { FormComponentTypePlugin, WidgetTypePlugin } from "src";
 
 export const contentPlugin: FormComponentTypePlugin = {
-  icon: <>&#128441;</>,
   type: contentType,
   init: (name) => content({ name }, () => ""),
 };

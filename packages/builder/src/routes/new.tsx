@@ -12,6 +12,7 @@ import { FormBuilderContext, RouteArgs } from "../router";
 import styles from "../styles";
 import { serializeComponent, SerializedComponentsList } from "@fab4m/fab4m";
 import t from "../translations";
+import { icons } from "../icons";
 
 export function action({ plugins, storage }: RouteArgs) {
   return async ({ request }: ActionFunctionArgs) => {
@@ -70,7 +71,9 @@ export default function NewComponent() {
               className={`${styles.insetBtn} mr-4 p-4 mb-4 text-base flex font-bold rounded`}
               key={i}
             >
-              {type.icon && <span className="text-3xl mr-1">{type.icon}</span>}
+              {icons[type.type.name] && (
+                <span className="text-3xl mr-1">{icons[type.type.name]}</span>
+              )}
               <span className="my-auto">{type.type.title}</span>
             </button>
           ))}

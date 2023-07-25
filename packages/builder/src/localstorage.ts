@@ -1,5 +1,5 @@
 import { SerializedForm } from "@fab4m/fab4m";
-import { FormStorage } from ".";
+import { FlashMessage, FormStorage } from ".";
 import { updateComponent } from "./util";
 import invariant from "tiny-invariant";
 
@@ -13,6 +13,15 @@ export function localFormStorage(
     form = updatedForm;
     return form;
   };
+  const getFlashMessage = async (reset = true) => {
+    const stored = sessionStorage.getItem(`${key}_flash`);
+    const flash = stored ? JSON.parse(stored) : null;
+    if (reset) {
+      sessionStorage.removeItem(`${key}_flash`);
+    }
+    return flash;
+  };
+
   return {
     loadForm: async () => {
       const content = localStorage.getItem(key);
@@ -32,6 +41,10 @@ export function localFormStorage(
       invariant(form);
       const updatedForm = updateComponent(form, key, component);
       await saveForm(updatedForm);
+    },
+    getFlashMessage,
+    flash: async (message: FlashMessage) => {
+      sessionStorage.setItem(`${key}_flash`, JSON.stringify(message));
     },
     saveForm,
   };

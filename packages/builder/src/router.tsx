@@ -1,6 +1,6 @@
 import React from "react";
 import { RouteObject } from "react-router-dom";
-import { FormStorage, Plugins } from ".";
+import { FormBuilderArgs, Plugins } from ".";
 import * as root from "./routes";
 import * as EditComponent from "./routes/edit_$component";
 import * as NewComponent from "./routes/new";
@@ -9,23 +9,23 @@ import * as SettingsComponent from "./routes/settings";
 import Overlay from "./components/Overlay";
 import { Theme } from "@fab4m/fab4m";
 
-export interface RouteArgs {
-  plugins: Plugins;
-  storage: FormStorage;
-  themes: Theme[];
-}
-
-export type LoaderCreatorArgs = RouteArgs;
+export type LoaderCreatorArgs = FormBuilderArgs;
 export type ActionCreatorArgs = LoaderCreatorArgs;
 
-export function routes(args: RouteArgs): RouteObject[] {
+export function routes(args: FormBuilderArgs): RouteObject[] {
   return [
     {
       path: "/",
       loader: root.loader(args),
       action: root.action(args),
       id: "root",
-      element: <root.default plugins={args.plugins} themes={args.themes} />,
+      element: (
+        <root.default
+          plugins={args.plugins}
+          themes={args.themes}
+          icons={args.icons}
+        />
+      ),
       children: [
         {
           path: "edit/:component",
