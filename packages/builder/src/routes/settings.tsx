@@ -1,11 +1,7 @@
-import { SerializedForm, fromFormData, useForm } from "@fab4m/fab4m";
+import { fromFormData, useForm } from "@fab4m/fab4m";
 import { StatefulFormRoute } from "@fab4m/routerforms";
 import React from "react";
-import {
-  ActionFunctionArgs,
-  redirect,
-  useRouteLoaderData,
-} from "react-router-dom";
+import { ActionFunctionArgs, redirect } from "react-router-dom";
 import { formSettingsForm } from "../forms/form";
 import t from "../translations";
 import { useFormBuilderContext } from ".";
@@ -29,7 +25,6 @@ export function action({ storage, themes }: ActionCreatorArgs) {
 }
 
 export default function Settings() {
-  const form = useRouteLoaderData("root") as SerializedForm;
   const context = useFormBuilderContext();
   const settingsForm = useForm(
     () => formSettingsForm(context.themes),
@@ -39,13 +34,13 @@ export default function Settings() {
     <StatefulFormRoute
       form={settingsForm}
       data={{
-        theme: form.theme,
+        theme: context.form.theme,
         labels: {
-          submit: form.labels?.submit ?? t("submit"),
-          next: form.labels?.next ?? t("next"),
-          previous: form.labels?.previous ?? t("previous"),
-          complete: form.labels?.complete ?? t("complete"),
-          required: form.labels?.required ?? t("required"),
+          submit: context.form.labels?.submit ?? t("submit"),
+          next: context.form.labels?.next ?? t("next"),
+          previous: context.form.labels?.previous ?? t("previous"),
+          complete: context.form.labels?.complete ?? t("complete"),
+          required: context.form.labels?.required ?? t("required"),
         },
       }}
       useRouteAction={true}

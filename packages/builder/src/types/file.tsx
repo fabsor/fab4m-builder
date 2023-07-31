@@ -1,4 +1,3 @@
-import React from "react";
 import {
   fileField,
   fileFieldType,
@@ -8,7 +7,6 @@ import {
 import { FormComponentTypePlugin, WidgetTypePlugin } from "src";
 
 export const fileFieldPlugin: FormComponentTypePlugin<FileUploadSettings> = {
-  icon: <>&#128441;</>,
   type: fileFieldType,
   init: (name) => fileField({ name }),
 };

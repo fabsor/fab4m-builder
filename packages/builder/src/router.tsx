@@ -7,7 +7,7 @@ import * as NewComponent from "./routes/new";
 import * as DeleteComponent from "./routes/delete_$component";
 import * as SettingsComponent from "./routes/settings";
 import Overlay from "./components/Overlay";
-import { Theme } from "@fab4m/fab4m";
+import { SerializedForm, Theme } from "@fab4m/fab4m";
 
 export type LoaderCreatorArgs = FormBuilderArgs;
 export type ActionCreatorArgs = LoaderCreatorArgs;
@@ -19,13 +19,7 @@ export function routes(args: FormBuilderArgs): RouteObject[] {
       loader: root.loader(args),
       action: root.action(args),
       id: "root",
-      element: (
-        <root.default
-          plugins={args.plugins}
-          themes={args.themes}
-          icons={args.icons}
-        />
-      ),
+      element: <root.default plugins={args.plugins} themes={args.themes} />,
       children: [
         {
           path: "edit/:component",
@@ -65,4 +59,5 @@ export function routes(args: FormBuilderArgs): RouteObject[] {
 export interface FormBuilderContext {
   plugins: Plugins;
   themes: Theme[];
+  form: SerializedForm;
 }

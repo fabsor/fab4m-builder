@@ -1,4 +1,3 @@
-import React from "react";
 import {
   dateField,
   dateTimeFieldType,
@@ -28,19 +27,16 @@ import t from "../translations";
 import { invariantReturn } from "../util";
 
 export const dateFieldPlugin: FormComponentTypePlugin = {
-  icon: <>&#128441;</>,
   type: dateFieldType,
   init: (name) => dateField({ name }),
 };
 
 export const dateTimeFieldPlugin: FormComponentTypePlugin = {
-  icon: <>&#128441;</>,
   type: dateTimeFieldType,
   init: (name) => dateTimeField({ name }),
 };
 
 export const dateRangeFieldPlugin: FormComponentTypePlugin = {
-  icon: <>&#128441;</>,
   type: dateRangeFieldType,
   init: (name) => dateRangeField({ name }),
 };

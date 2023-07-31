@@ -1,4 +1,3 @@
-import React from "react";
 import {
   textAreaWidgetType,
   textField,
@@ -8,7 +7,6 @@ import {
 import { FormComponentTypePlugin, WidgetTypePlugin } from "src";
 
 export const textFieldPlugin: FormComponentTypePlugin = {
-  icon: <>&#128441;</>,
   type: textFieldType,
   init: (name) => textField({ name }),
 };

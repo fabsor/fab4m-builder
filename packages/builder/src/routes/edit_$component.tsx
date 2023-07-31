@@ -1,15 +1,14 @@
-import { useForm, SerializedForm, SerializedComponent } from "@fab4m/fab4m";
+import { useForm, SerializedComponent } from "@fab4m/fab4m";
 import React, { useEffect, useState } from "react";
 import {
   ActionFunction,
   redirect,
   useOutletContext,
   useParams,
-  useRouteLoaderData,
 } from "react-router-dom";
 import { FormComponentTypePlugin } from "../";
 import invariant from "tiny-invariant";
-import { findComponentFromKey, findPlugin } from "../util";
+import { findComponentFromKey, findPlugin, invariantReturn } from "../util";
 import { FormRoute } from "@fab4m/routerforms";
 import { componentForm, componentFromFormData } from "../forms/component";
 import { ActionCreatorArgs, FormBuilderContext } from "src/router";
@@ -49,13 +48,14 @@ export function action({
       request,
       currentForm
     );
+
     component.components = currentComponent.components;
     await storage.editComponent(params.component, component);
     await storage.flash({
-      title: t("componentSaved"),
-      description: t("componentXSaved", {
-        component: component.label ?? component.name,
+      title: t("componentXSaved", {
+        component: invariantReturn(component.label ?? component.name),
       }),
+      description: t("componentSaved"),
       type: "success",
     });
     return redirect("../..");
@@ -121,7 +121,7 @@ export default function EditComponent() {
     [plugin]
   ).onDataChange(changeData);
   return (
-    <section>
+    <section className="-mb-8">
       <FormRoute
         form={form}
         data={data}
@@ -136,8 +136,10 @@ function useComponentInfo() {
   const params = useParams<{ component: string }>();
   const context = useFormBuilderContext();
   invariant(params.component);
-  const { form } = useRouteLoaderData("root") as { form: SerializedForm };
-  const component = findComponentFromKey(form.components, params.component);
+  const component = findComponentFromKey(
+    context.form.components,
+    params.component
+  );
 
   const plugin = findPlugin<FormComponentTypePlugin>(
     component.type,
@@ -146,6 +148,6 @@ function useComponentInfo() {
   return {
     plugin,
     component,
-    currentForm: form,
+    currentForm: context.form,
   };
 }

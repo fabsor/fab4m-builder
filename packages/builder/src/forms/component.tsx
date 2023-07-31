@@ -36,6 +36,10 @@ export interface ComponentData {
   name: string;
   required: boolean;
   description?: string;
+  multiple: boolean;
+  minItems?: number;
+  maxItems?: number;
+  actions: unknown;
   settings?: Record<string, unknown>;
   widget: string;
   validators: Array<{ type: string; settings: Record<string, unknown> }>;

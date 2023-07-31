@@ -1,4 +1,3 @@
-import React from "react";
 import {
   floatField,
   floatFieldType,
@@ -10,12 +9,10 @@ import { FormComponentTypePlugin, WidgetTypePlugin } from "src";
 
 export const integerFieldPlugin: FormComponentTypePlugin = {
   type: integerFieldType,
-  icon: <>&#35;</>,
   init: (name) => integerField({ name }),
 };
 
 export const floatFieldPlugin: FormComponentTypePlugin = {
-  icon: <>#.#</>,
   type: floatFieldType,
   init: (name) => floatField({ name }),
 };

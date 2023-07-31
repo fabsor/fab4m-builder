@@ -39,7 +39,7 @@
 *** DONE Theme switcher
 *** DONE Overlay dialog?
 *** DONE Light/Dark setting?
-*** TODO Notifications
+*** DONE Notifications
 *** DONE Icons
 *** TODO Translations
 *** TODO Laggy dnd

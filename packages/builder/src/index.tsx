@@ -74,3 +74,4 @@ export function formBuilder(args: FormBuilderArgs) {
 }
 
 export * from "./components/FormBuilder";
+export * from "./translations";

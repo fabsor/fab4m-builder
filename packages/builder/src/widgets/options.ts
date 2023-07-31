@@ -1,12 +1,9 @@
-import * as React from "react";
 import {
   selectWidgetType,
   radiosWidgetType,
   Option,
   Options,
   SelectWidgetSettings,
-  group,
-  horizontalGroupWidget,
   textField,
   textAreaField,
 } from "@fab4m/fab4m";

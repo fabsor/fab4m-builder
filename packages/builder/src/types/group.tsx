@@ -1,11 +1,9 @@
-import * as React from "react";
 import {
   group,
   groupType,
   groupWidgetType,
   detailsWidgetType,
   DetailsSettings,
-  textField,
   booleanField,
   fieldsetWidgetType,
   horizontalGroupWidgetType,
@@ -14,7 +12,6 @@ import { FormComponentTypePlugin, WidgetTypePlugin } from "src";
 import t from "../translations";
 
 export const groupPlugin: FormComponentTypePlugin = {
-  icon: <>&#128441;</>,
   type: groupType,
   init: (name) => group({ name }, []),
 };

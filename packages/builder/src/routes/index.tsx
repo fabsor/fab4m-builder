@@ -4,21 +4,16 @@ import {
   StatefulFormView,
   Theme,
 } from "@fab4m/fab4m";
-import React, { forwardRef, useCallback, useRef, useState } from "react";
+import React, { forwardRef, useState } from "react";
 import t from "../translations";
 import {
   ActionFunction,
   Link,
   Outlet,
-  useActionData,
   useFetcher,
   useLoaderData,
   useLocation,
-  useMatch,
-  useNavigate,
   useParams,
-  useSubmit,
-  Form as RouterForm,
   useOutletContext,
 } from "react-router-dom";
 import { FlashMessage, Plugins } from "..";
@@ -129,7 +124,9 @@ export default function FormBuilder(props: {
   }
 
   const outlet = (
-    <Outlet context={{ plugins: props.plugins, themes: props.themes }} />
+    <Outlet
+      context={{ plugins: props.plugins, themes: props.themes, form: form }}
+    />
   );
   return (
     <main>
@@ -178,7 +175,7 @@ export default function FormBuilder(props: {
           )}
           {!params.component && outlet}
         </section>
-        <section className="col-span-2 border-l dark:border-slate-700 p-4 dark:bg-slate-800">
+        <section className="col-span-2 border-l bg-slate-100 dark:border-slate-700 p-4 dark:bg-slate-800">
           <h2 className={styles.h2}>Preview</h2>
           <div>
             <StatefulFormView

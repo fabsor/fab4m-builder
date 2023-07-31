@@ -1,4 +1,4 @@
-import { selectWidgetType, textAreaField } from "@fab4m/fab4m";
+import { textAreaField } from "@fab4m/fab4m";
 import {
   AutocompleteSettings,
   autocompleteWidgetType,

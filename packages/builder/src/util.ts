@@ -1,9 +1,7 @@
 import {
-  basic,
   SerializedComponent,
   SerializedComponentsList,
   SerializedForm,
-  tailwind,
   Theme,
   unserialize,
 } from "@fab4m/fab4m";
@@ -17,7 +15,7 @@ export function invariantReturn<Type>(data: Type | undefined | null): Type {
 }
 
 export function findPlugin<
-  PluginType extends Plugin<unknown> & { type: { name: string } }
+  PluginType extends Plugin<any, any> & { type: { name: string } }
 >(typeName: string, plugins: Array<PluginType>): PluginType {
   const pluginType = plugins.find((plugin) => plugin.type.name === typeName);
   return invariantReturn(pluginType);
@@ -27,8 +25,10 @@ export function findComponent(
   form: SerializedForm,
   name: string
 ): SerializedComponent {
-  const component = form.components.find((c) => c.name === name);
-  return invariantReturn(component);
+  const component = form.components.find(
+    (c) => !Array.isArray(c) && c.name === name
+  );
+  return invariantReturn(component) as SerializedComponent;
 }
 
 export function findComponentWidgets(

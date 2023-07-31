@@ -3,7 +3,6 @@ import {
   ActionFunction,
   redirect,
   useParams,
-  useRouteLoaderData,
   Form,
   Link,
 } from "react-router-dom";
@@ -11,8 +10,8 @@ import invariant from "tiny-invariant";
 import { findComponentFromKey, findKey, invariantReturn } from "../util";
 import { ActionCreatorArgs } from "../router";
 import styles from "../styles";
-import { SerializedForm } from "@fab4m/fab4m";
 import t from "../translations";
+import { useFormBuilderContext } from ".";
 
 export function action({ storage }: ActionCreatorArgs): ActionFunction {
   return async ({ request }) => {
@@ -29,7 +28,7 @@ export function action({ storage }: ActionCreatorArgs): ActionFunction {
 }
 
 export default function DeleteComponent() {
-  const form = useRouteLoaderData("root") as SerializedForm;
+  const { form } = useFormBuilderContext();
   const params = useParams<{ component: string }>();
   invariant(params.component);
   const component = findComponentFromKey(form.components, params.component);
@@ -37,7 +36,7 @@ export default function DeleteComponent() {
     <Form method="post">
       <p className="mb-2 dark:text-slate-200">
         {t("confirmRemoveComponent", {
-          component: component.label ?? component.name,
+          component: invariantReturn(component.label ?? component.name),
         })}
       </p>
       <div className="flex">
@@ -48,7 +47,7 @@ export default function DeleteComponent() {
         >
           {t("delete")}
         </button>
-        <Link className={"ml-4 my-auto text-blue-200"} to="../..">
+        <Link className={"ml-4 my-auto text-blue-600"} to="../..">
           {t("cancel")}
         </Link>
       </div>

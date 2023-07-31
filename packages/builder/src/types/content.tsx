@@ -11,7 +11,10 @@ export const contentPlugin: FormComponentTypePlugin = {
   init: (name) => content({ name }, () => ""),
 };
 
-export const contentWidgetPlugin: WidgetTypePlugin<{ prefix?: string }> = {
+export const contentWidgetPlugin: WidgetTypePlugin<
+  { content?: string },
+  { content: string }
+> = {
   type: contentWidgetType,
   editForm: () => ({
     content: textAreaField({ required: true }),
