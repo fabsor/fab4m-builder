@@ -12,6 +12,12 @@ import {
 import { createBrowserRouter } from "react-router-dom";
 import { FormBuilder } from "./components/FormBuilder";
 import { routes } from "./router";
+export * from "./types";
+export * from "./widgets";
+export * from "./validators";
+
+export { localFormStorage } from "./localstorage";
+export * from "./util";
 
 export interface Plugin<SettingsType, SettingsFormData> {
   editForm?: () => Components<SettingsFormData>;
@@ -72,6 +78,8 @@ export function formBuilder(args: FormBuilderArgs) {
   const router = createBrowserRouter(routes(args));
   return <FormBuilder router={router} />;
 }
+
+export { routes };
 
 export * from "./components/FormBuilder";
 export * from "./translations";

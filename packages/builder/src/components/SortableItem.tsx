@@ -1,8 +1,8 @@
 import { useSortable } from "@dnd-kit/sortable";
-import { RxMove } from "react-icons/rx";
 import React from "react";
 import styles from "../styles";
 import { CSS } from "@dnd-kit/utilities";
+import { Move } from "lucide-react";
 export default function SortableItem(props: {
   name: string;
   parent: string;
@@ -31,7 +31,7 @@ export default function SortableItem(props: {
           {...listeners}
           aria-label="move"
         >
-          <RxMove className="mt-1" />
+          <Move className="w-6" />
         </div>
         <h3 className="grow my-auto text-small">{props.header}</h3>
         {props.actions && <div className="ml-2 flex">{props.actions}</div>}

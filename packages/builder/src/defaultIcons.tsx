@@ -1,30 +1,30 @@
 import React from "react";
 import {
-  RxCalendar,
-  RxClock,
-  RxEnvelopeClosed,
-  RxFilePlus,
-  RxFrame,
-  RxGroup,
-  RxLink2,
-  RxMinus,
-  RxMove,
-  RxText,
-} from "react-icons/rx";
+  CalendarDays,
+  CalendarRange,
+  CalendarClock,
+  Mail,
+  SplitSquareVertical,
+  TextCursor,
+  FileDigit,
+  Hash,
+  FileUp,
+  Link,
+  Group,
+} from "lucide-react";
 
 const defaultIcons = {
-  date: <RxCalendar />,
-  datetime: <RxClock />,
-  daterange: <RxCalendar />,
-  text: <RxText />,
-  integer: <RxFrame />,
-  float: <RxFrame />,
-  email: <RxEnvelopeClosed />,
-  file: <RxFilePlus />,
-  pagebreak: <RxMinus />,
-  url: <RxLink2 />,
-  group: <RxGroup />,
-  dragndrop: <RxMove />,
+  date: <CalendarDays />,
+  datetime: <CalendarClock />,
+  daterange: <CalendarRange />,
+  text: <TextCursor />,
+  integer: <FileDigit />,
+  float: <Hash />,
+  email: <Mail />,
+  file: <FileUp />,
+  pagebreak: <SplitSquareVertical />,
+  url: <Link />,
+  group: <Group />,
 };
 
 export default defaultIcons;

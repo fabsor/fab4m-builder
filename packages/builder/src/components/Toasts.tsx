@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import * as Toast from "@radix-ui/react-toast";
 import { FlashMessage } from "..";
 import t from "../translations";
-import { RxCross2 } from "react-icons/rx";
+
+import { X } from "lucide-react";
 
 export default function ToastMessage(props: { toast: FlashMessage }) {
   const [open, changeOpen] = useState(true);
@@ -30,7 +31,7 @@ export default function ToastMessage(props: { toast: FlashMessage }) {
             className="cursor-pointer hover:bg-emerald-900"
             onClick={() => changeOpen(false)}
           >
-            <RxCross2 />
+            <X />
           </button>
         </Toast.Action>
       </Toast.Root>

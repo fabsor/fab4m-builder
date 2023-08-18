@@ -46,7 +46,7 @@ import {
 } from "@dnd-kit/sortable";
 import SortableItem from "../components/SortableItem";
 import { createPortal } from "react-dom";
-import { RxPencil2, RxTrash } from "react-icons/rx";
+import { Pencil, Trash2, Settings } from "lucide-react";
 import ToastMessage from "../components/Toasts";
 
 export function loader({ storage }: LoaderCreatorArgs) {
@@ -133,18 +133,19 @@ export default function FormBuilder(props: {
       {message && <ToastMessage toast={message} />}
       <div className="lg:grid grid-cols-8 gap-5 min-h-screen">
         <section className="col-span-6 p-4 relative">
-          <h1 className={styles.h1}>{t("editForm")}</h1>
           {fetcher.state === "submitting" && (
             <div className="absolute h-full w-full dark:bg-slate-900 flex justify-center dark:text-white text-3xl">
               Loading...
             </div>
           )}
           <Link
-            className={`${styles.primaryBtn} mb-4 inline-block`}
+            className={`${styles.link} text-xs flex h-6 float-right mr-2 mt-2`}
             to="settings"
           >
-            {t("formSettings")}
+            <Settings className="mr-1 w-4" />
+            <span className="my-auto">{t("formSettings")}</span>
           </Link>
+
           <h2 className={styles.h2}>{t("components")}</h2>
           <div className="mb-6">
             <DndContext
@@ -169,12 +170,13 @@ export default function FormBuilder(props: {
             </DndContext>
           </div>
           {location.pathname !== "/new" && (
-            <Link to="new" className={styles.primaryBtn}>
+            <Link to="new" className={`${styles.primaryBtn}`}>
               {t("newComponent")}
             </Link>
           )}
           {!params.component && outlet}
         </section>
+
         <section className="col-span-2 border-l bg-slate-100 dark:border-slate-700 p-4 dark:bg-slate-800">
           <h2 className={styles.h2}>Preview</h2>
           <div>
@@ -220,7 +222,7 @@ function Components(props: ComponentsProps) {
                     to={`edit/${key}`}
                     className={`${styles.insetBtn} flex`}
                   >
-                    <RxPencil2 className="mr-2 my-auto" />
+                    <Pencil className="mr-1 my-auto w-4" />
                     <span className="my-auto text-sm">Edit</span>
                   </Link>
                 )}
@@ -228,7 +230,7 @@ function Components(props: ComponentsProps) {
                   to={`delete/${key}`}
                   className={`ml-2 ${styles.insetBtn} flex`}
                 >
-                  <RxTrash className="mr-1 my-auto" />
+                  <Trash2 className="mr-1 my-auto w-4" />
                   <span className="my-auto text-sm">Delete</span>
                 </Link>
               </>

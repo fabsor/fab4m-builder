@@ -21,7 +21,8 @@ import {
   selectWidget,
   tagsWidget,
   textField,
-  unavailable,
+  exists,
+  not,
 } from "@fab4m/fab4m";
 import t from "../translations";
 import { invariantReturn } from "../util";
@@ -57,7 +58,7 @@ function datePickerForm() {
         locale: textField({
           label: t("locale"),
           widget: selectWidget(availableLocales.map((l) => l.code ?? "")),
-          rules: [["widgetSettings.useBrowserLocale", unavailable()]],
+          rules: [not([["widgetSettings.useBrowserLocale", exists()]])],
         }),
         locales: textField({
           label: t("availableLocales"),
