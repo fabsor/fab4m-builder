@@ -31,7 +31,7 @@ export default function SortableItem(props: {
           {...listeners}
           aria-label="move"
         >
-          <Move className="w-6" />
+          <Move className="w-[18px] mx-auto" />
         </div>
         <h3 className="grow my-auto text-small">{props.header}</h3>
         {props.actions && <div className="ml-2 flex">{props.actions}</div>}

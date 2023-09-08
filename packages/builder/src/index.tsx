@@ -17,6 +17,7 @@ export * from "./widgets";
 export * from "./validators";
 
 export { localFormStorage } from "./localstorage";
+export { defaultIcons } from "./defaultIcons";
 export * from "./util";
 
 export interface Plugin<SettingsType, SettingsFormData> {

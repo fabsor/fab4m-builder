@@ -262,7 +262,10 @@ export function componentForm(args: {
         {
           save: submit({ label: "Save" }, { title: "Save" }),
           cancel: content({}, () => (
-            <a href=".." className={styles.dangerBtn}>
+            <a
+              href=".."
+              className="text-red-600 ml-2 mt-2 inline-block hover:text-red-700 hover:underline"
+            >
               {t("cancel")}
             </a>
           )),

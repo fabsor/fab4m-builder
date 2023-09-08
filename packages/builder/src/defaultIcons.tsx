@@ -13,7 +13,7 @@ import {
   Group,
 } from "lucide-react";
 
-const defaultIcons = {
+export const defaultIcons = {
   date: <CalendarDays />,
   datetime: <CalendarClock />,
   daterange: <CalendarRange />,
@@ -26,5 +26,3 @@ const defaultIcons = {
   url: <Link />,
   group: <Group />,
 };
-
-export default defaultIcons;

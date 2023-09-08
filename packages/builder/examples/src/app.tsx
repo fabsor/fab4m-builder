@@ -74,7 +74,7 @@ import {
 } from "../../src/validators/length";
 import "@fab4m/fab4m/css/basic/basic.css";
 import { localFormStorage } from "../../src/localstorage";
-import defaultIcons from "../../src/defaultIcons";
+import { defaultIcons } from "../../src/defaultIcons";
 import { setIcons } from "../../src/icons";
 import sv from "date-fns/locale/sv";
 setDefaultTheme(tailwind);
