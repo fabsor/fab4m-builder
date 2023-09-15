@@ -29,7 +29,6 @@ import {
 import { FormComponentTypePlugin, Plugins } from "..";
 import invariant from "tiny-invariant";
 import t from "../translations";
-import styles from "../styles";
 
 export interface ComponentData {
   label: string;

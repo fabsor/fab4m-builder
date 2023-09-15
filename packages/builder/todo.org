@@ -51,8 +51,8 @@
 
 * fab4m.com
 ** DONE reduce size of dnd icon
-** TODO make cancel button less prevalent
-** TODO Render forms and integrate with remix
+** DONE make cancel button less prevalent
+** DONE Render forms and integrate with remix
 ** DONE Remove front page, redirect to login
 ** TODO Form stats
 ** TODO Customize top bar
@@ -63,4 +63,6 @@
 ** TODO Logo
 ** TODO cookie secret management
 ** TODO Cookie info on fab4m forms
+** TODO Support all external packages in remix app
 ** TODO HCaptcha integration
+** TODO Unique identifier on form submissions

@@ -7,3 +7,4 @@ export * from "./number";
 export * from "./pagebreak";
 export * from "./text";
 export * from "./url";
+export * from "./boolean";

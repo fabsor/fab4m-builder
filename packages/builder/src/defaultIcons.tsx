@@ -11,6 +11,7 @@ import {
   FileUp,
   Link,
   Group,
+  CheckSquare
 } from "lucide-react";
 
 export const defaultIcons = {
@@ -25,4 +26,5 @@ export const defaultIcons = {
   pagebreak: <SplitSquareVertical />,
   url: <Link />,
   group: <Group />,
+  boolean: <CheckSquare />
 };
