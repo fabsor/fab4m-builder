@@ -15,14 +15,14 @@ import t from "../translations";
 import { icons } from "../icons";
 
 export function action({ plugins, storage }: ActionCreatorArgs) {
-  return async ({ request }: ActionFunctionArgs) => {
-    const data = await request.formData();
+  return async (args: ActionFunctionArgs) => {
+    const data = await args.request.formData();
     const type = data.get("type");
     const parent = data.get("parent");
     if (!type) {
       throw new Error("Type not provided.");
     }
-    const form = await storage.loadForm();
+    const form = await storage.loadForm(args);
     const plugin = findPlugin(type.toString(), plugins.types);
     let list: SerializedComponentsList;
     if (parent) {
@@ -39,7 +39,7 @@ export function action({ plugins, storage }: ActionCreatorArgs) {
     component.label = plugin.type.title;
     list.push(serializeComponent(component));
 
-    await storage.saveForm(form);
+    await storage.saveForm(form, args);
     return redirect(
       component.type.splitsForm
         ? ".."

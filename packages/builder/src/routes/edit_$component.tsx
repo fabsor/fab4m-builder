@@ -35,22 +35,22 @@ export function action({
   plugins,
   storage,
 }: ActionCreatorArgs): ActionFunction {
-  return async ({ params, request }) => {
-    const currentForm = await storage.loadForm();
-    invariant(params.component);
+  return async (args) => {
+    const currentForm = await storage.loadForm(args);
+    invariant(args.params.component);
     const currentComponent = findComponentFromKey(
       currentForm.components,
-      params.component
+      args.params.component
     );
     const component = await componentFromFormData(
       currentComponent.type,
       plugins,
-      request,
+      args.request,
       currentForm
     );
 
     component.components = currentComponent.components;
-    await storage.editComponent(params.component, component);
+    await storage.editComponent(args.params.component, component, args);
     await storage.flash({
       title: t("componentXSaved", {
         component: invariantReturn(component.label ?? component.name),

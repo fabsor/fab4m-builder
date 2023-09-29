@@ -3,6 +3,8 @@ import {
   booleanField,
   content,
   createForm,
+  defaultMultipleWidget,
+  detailsWidget,
   equals,
   exists,
   fromFormData,
@@ -180,12 +182,13 @@ export function componentForm(args: {
         {
           label: t("validators"),
           multiple: true,
-          widget: horizontalGroupWidget(),
+          minItems: 1,
+          widget: detailsWidget({ open: true, summary: (v) => v ? v.type : "Validator" }),
+          multipleWidget: defaultMultipleWidget({ addItemLabel: t("addValidator")}),
         },
         {
           type: textField({
             label: t("validator"),
-            required: true,
             widget: selectWidget(
               findComponentValidators(
                 args.type.type.name,

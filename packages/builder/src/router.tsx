@@ -12,10 +12,10 @@ import { SerializedForm, Theme } from "@fab4m/fab4m";
 export type LoaderCreatorArgs = FormBuilderArgs;
 export type ActionCreatorArgs = LoaderCreatorArgs;
 
-export function routes(args: FormBuilderArgs): RouteObject[] {
+export function routes(args: FormBuilderArgs, rootPath = "/"): RouteObject[] {
   return [
     {
-      path: "/",
+      path: rootPath,
       loader: root.loader(args),
       action: root.action(args),
       id: "root",

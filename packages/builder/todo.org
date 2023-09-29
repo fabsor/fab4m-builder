@@ -42,24 +42,29 @@
 *** DONE Notifications
 *** DONE Icons
 *** TODO Translations
-*** TODO Laggy dnd
+*** DONE Laggy dnd
 *** TODO Mobile
 *** TODO Tests?
+
 * Next version
 ** Rule groups
 ** Password
 
 * fab4m.com
+
+** WTF validators
+** TODO Profile
+*** TODO Content field
 ** DONE reduce size of dnd icon
 ** DONE make cancel button less prevalent
 ** DONE Render forms and integrate with remix
 ** DONE Remove front page, redirect to login
 ** TODO Form stats
-** TODO Customize top bar
-** TODO Form submissions
-** TODO Fix cookie lifetime
+** DONE Customize top bar*
+** DONE Form submissions
+** DONE Fix cookie lifetime
 ** TODO Use buttons for actions in the forms table
-** TODO Delete doesn't work
+** DONE Delete doesn't work
 ** TODO Logo
 ** TODO cookie secret management
 ** TODO Cookie info on fab4m forms

@@ -8,13 +8,13 @@ import { useFormBuilderContext } from ".";
 import { ActionCreatorArgs } from "../router";
 
 export function action({ storage, themes }: ActionCreatorArgs) {
-  return async ({ request }: ActionFunctionArgs) => {
-    const form = await storage.loadForm();
+  return async (args: ActionFunctionArgs) => {
+    const form = await storage.loadForm(args);
     const settingsForm = formSettingsForm(themes);
-    const data = fromFormData(settingsForm, await request.formData());
+    const data = fromFormData(settingsForm, await args.request.formData());
     form.labels = data.labels;
     form.theme = data.theme;
-    await storage.saveForm(form);
+    await storage.saveForm(form, args);
     await storage.flash({
       title: t("settingsSaved"),
       description: t("formSettingsSaved"),

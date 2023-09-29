@@ -14,15 +14,15 @@ import t from "../translations";
 import { useFormBuilderContext } from ".";
 
 export function action({ storage }: ActionCreatorArgs): ActionFunction {
-  return async ({ request }) => {
-    const form = await storage.loadForm();
-    const data = await request.formData();
+  return async (args) => {
+    const form = await storage.loadForm(args);
+    const data = await args.request.formData();
     const keyToDelete = invariantReturn(data.get("delete")).toString();
     const [sourceList, sourceIndex] = findKey(form.components, keyToDelete);
     if (sourceList) {
       sourceList.splice(sourceIndex, 1);
     }
-    await storage.saveForm(form);
+    await storage.saveForm(form, args);
     return redirect("../..");
   };
 }

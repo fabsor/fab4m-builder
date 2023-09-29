@@ -15,6 +15,7 @@ import {
   useLocation,
   useParams,
   useOutletContext,
+  LoaderFunctionArgs,
 } from "react-router-dom";
 import { FlashMessage, Plugins } from "..";
 import {
@@ -50,18 +51,18 @@ import { Pencil, Trash2, Settings } from "lucide-react";
 import ToastMessage from "../components/Toasts";
 
 export function loader({ storage }: LoaderCreatorArgs) {
-  return async () => {
+  return async (args: LoaderFunctionArgs) => {
     return {
-      form: await storage.loadForm(),
+      form: await storage.loadForm(args),
       message: await storage.getFlashMessage(true),
     };
   };
 }
 
 export function action({ storage }: ActionCreatorArgs): ActionFunction {
-  return async ({ request }) => {
-    const data = await request.formData();
-    const form = await storage.loadForm();
+  return async (args) => {
+    const data = await args.request.formData();
+    const form = await storage.loadForm(args);
     const from = invariantReturn(data.get("from")).toString();
     const to = invariantReturn(data.get("to")).toString();
     const [sourceList, sourceIndex] = findKey(form.components, from);
@@ -85,7 +86,7 @@ export function action({ storage }: ActionCreatorArgs): ActionFunction {
         }
       }
     }
-    return await storage.saveForm(form);
+    return await storage.saveForm(form, args);
   };
 }
 

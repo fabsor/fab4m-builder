@@ -9,7 +9,7 @@ import {
   FormComponent,
   Theme,
 } from "@fab4m/fab4m";
-import { createBrowserRouter } from "react-router-dom";
+import { ActionFunctionArgs, createBrowserRouter, LoaderFunctionArgs } from "react-router-dom";
 import { FormBuilder } from "./components/FormBuilder";
 import { routes } from "./router";
 export * from "./types";
@@ -54,11 +54,12 @@ export interface FlashMessage {
   type: "success" | "error";
 }
 
+
 export interface FormStorage {
-  loadForm: () => Promise<SerializedForm>;
-  addComponent: (newComponent: SerializedComponent) => Promise<void>;
-  editComponent: (key: string, component: SerializedComponent) => Promise<void>;
-  saveForm: (form: SerializedForm) => Promise<SerializedForm>;
+  loadForm: (context: LoaderFunctionArgs) => Promise<SerializedForm>;
+  addComponent: (newComponent: SerializedComponent, context: ActionFunctionArgs) => Promise<void>;
+  editComponent: (key: string, component: SerializedComponent, context: ActionFunctionArgs) => Promise<void>;
+  saveForm: (form: SerializedForm, context: ActionFunctionArgs) => Promise<SerializedForm>;
   getFlashMessage: (reset: boolean) => Promise<FlashMessage | null>;
   flash: (message: FlashMessage) => Promise<void>;
 }
