@@ -5,7 +5,7 @@ jobs:
   test:
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
         package: ["core", "password", "date", "routerforms", "autocomplete"]
     runs-on: ubuntu-latest
     steps:
@@ -17,4 +17,6 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: cd packages/core && npm run build
+      - run: cd packages/${{matrix.package}} && npx prettier --check .
+      - run: cd packages/${{matrix.package}} && npx eslint . --ext .js,.jsx,.ts,.tsx
       - run: cd packages/${{matrix.package}} && npm run test:unit

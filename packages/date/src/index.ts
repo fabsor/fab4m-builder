@@ -149,7 +149,7 @@ function unserializeDateSettings(settings: SerializedDateFieldSettings) {
 }
 
 function dateSettingsSerializer(
-  type: WidgetType<Date, DateFieldWidgetSettings>
+  type: WidgetType<Date, DateFieldWidgetSettings>,
 ): WidgetSerializer<Date, DateFieldWidgetSettings> {
   return {
     serialize(widget) {
@@ -160,7 +160,7 @@ function dateSettingsSerializer(
     },
     unserialize: (serialized) => {
       const settings = unserializeDateSettings(
-        serialized.settings as SerializedDateFieldSettings
+        serialized.settings as SerializedDateFieldSettings,
       );
       return {
         type,
@@ -185,7 +185,7 @@ const dateRangeSettingsSerializer: WidgetSerializer<
   },
   unserialize: (serialized) => {
     const settings = unserializeDateSettings(
-      serialized.settings as SerializedDateFieldSettings
+      serialized.settings as SerializedDateFieldSettings,
     );
     return {
       type: dateRangePickerWidgetType,
@@ -208,7 +208,7 @@ export const datePickerWidgetType: WidgetType<Date, DateFieldWidgetSettings> = {
 datePickerWidgetType.serializer = dateSettingsSerializer(datePickerWidgetType);
 
 export function datePickerWidget(
-  settings: DateFieldWidgetSettings = {}
+  settings: DateFieldWidgetSettings = {},
 ): Widget<Date, DateFieldWidgetSettings> {
   return widget({
     type: datePickerWidgetType,
@@ -227,7 +227,7 @@ export const dateTimePickerWidgetType: WidgetType<
 };
 
 dateTimePickerWidgetType.serializer = dateSettingsSerializer(
-  dateTimePickerWidgetType
+  dateTimePickerWidgetType,
 );
 
 export function dateTimePickerWidget(settings: DateFieldWidgetSettings = {}) {
@@ -250,7 +250,7 @@ export const dateRangePickerWidgetType: WidgetType<
 };
 
 export function dateRangePickerWidget(
-  settings: DateRangeWidgetSettings = { fromLabel: "From", toLabel: "To" }
+  settings: DateRangeWidgetSettings = { fromLabel: "From", toLabel: "To" },
 ) {
   return widget<DateRange, DateRangeWidgetSettings>({
     type: dateRangePickerWidgetType,
