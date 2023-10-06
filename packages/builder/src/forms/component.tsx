@@ -221,6 +221,7 @@ export function componentForm(args: {
                   }),
                 );
             };
+
             const change = (index: number, value: any) => {
               props.value &&
                 props.onChange(
@@ -229,7 +230,6 @@ export function componentForm(args: {
                   }),
                 );
             };
-            console.log(props.value);
             const addedValidators = props.value
               ? props.value.map((value, i) => {
                   const definition = validators.find(
@@ -251,6 +251,21 @@ export function componentForm(args: {
                       </button>
                     </>
                   );
+                  const component = (
+                    <FormComponentView
+                      name={`${props.component.name}[${i}]`}
+                      index={i}
+                      id={
+                        props.id
+                          ? `${props.id}-${i}`
+                          : `${props.component.name}-${i}`
+                      }
+                      onChange={(value) => change(i, value)}
+                      component={alteredComponent}
+                      theme={props.theme}
+                      value={value}
+                    />
+                  );
                   return definition?.editForm ? (
                     <details
                       key={i}
@@ -262,21 +277,7 @@ export function componentForm(args: {
                       >
                         {description}
                       </summary>
-                      <div className="px-4">
-                        <FormComponentView
-                          name={`${props.component.name}[${i}]`}
-                          index={i}
-                          id={
-                            props.id
-                              ? `${props.id}-${i}`
-                              : `${props.component.name}-${i}`
-                          }
-                          onChange={(value) => change(i, value)}
-                          component={alteredComponent}
-                          theme={props.theme}
-                          value={value}
-                        />
-                      </div>
+                      <div className="px-4">{component}</div>
                     </details>
                   ) : (
                     <div
@@ -284,6 +285,7 @@ export function componentForm(args: {
                       className={`flex ${props.theme.classes.summary} mb-4 cursor-default`}
                     >
                       {description}
+                      {component}
                     </div>
                   );
                 })

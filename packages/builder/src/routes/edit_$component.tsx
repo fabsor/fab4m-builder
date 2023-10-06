@@ -40,13 +40,13 @@ export function action({
     invariant(args.params.component);
     const currentComponent = findComponentFromKey(
       currentForm.components,
-      args.params.component
+      args.params.component,
     );
     const component = await componentFromFormData(
       currentComponent.type,
       plugins,
       args.request,
-      currentForm
+      currentForm,
     );
 
     component.components = currentComponent.components;
@@ -74,7 +74,7 @@ export default function EditComponent() {
   useEffect(() => {
     const widgetPlugin = findPlugin(
       component.widget.type,
-      context.plugins.widgets
+      context.plugins.widgets,
     );
 
     changeData({
@@ -89,7 +89,7 @@ export default function EditComponent() {
           type: validator.type,
           settings: plugin.formData
             ? plugin.formData(validator.settings)
-            : undefined,
+            : validator.settings,
         };
       }),
       rules: component.rules.map((rule) => {
@@ -102,7 +102,7 @@ export default function EditComponent() {
           rule: rule[1].type,
           settings: plugin.formData
             ? plugin.formData(rule[1].settings)
-            : undefined,
+            : (rule[1].settings as Record<string, unknown>),
         };
       }),
       widgetSettings: widgetPlugin.formData
@@ -118,7 +118,7 @@ export default function EditComponent() {
         formData: currentForm,
         currentComponent: component,
       }),
-    [plugin]
+    [plugin],
   ).onDataChange(changeData);
   return (
     <section className="-mb-8">
@@ -138,12 +138,12 @@ function useComponentInfo() {
   invariant(params.component);
   const component = findComponentFromKey(
     context.form.components,
-    params.component
+    params.component,
   );
 
   const plugin = findPlugin<FormComponentTypePlugin>(
     component.type,
-    context.plugins.types
+    context.plugins.types,
   );
   return {
     plugin,
