@@ -3,10 +3,10 @@ import {
   booleanField,
   content,
   createForm,
-  defaultMultipleWidget,
-  detailsWidget,
+  customMultipleWidget,
   equals,
   exists,
+  FormComponentView,
   fromFormData,
   group,
   hiddenFieldWidget,
@@ -31,6 +31,8 @@ import {
 import { FormComponentTypePlugin, Plugins } from "..";
 import invariant from "tiny-invariant";
 import t from "../translations";
+import { X } from "lucide-react";
+import { produce } from "immer";
 
 export interface ComponentData {
   label: string;
@@ -56,7 +58,7 @@ export async function componentFromFormData(
   typeName: string,
   plugins: Plugins,
   request: Request,
-  editForm: SerializedForm
+  editForm: SerializedForm,
 ): Promise<SerializedComponent> {
   const type = findPlugin(typeName, plugins.types);
   const formData = await request.formData();
@@ -85,7 +87,7 @@ export async function componentFromFormData(
       type: validator.type,
       settings: plugin.settingsFromForm
         ? plugin.settingsFromForm(validator.settings)
-        : undefined,
+        : validator.settings,
     };
   });
   serializedComponent.rules = data.rules.map((rule) => {
@@ -111,19 +113,24 @@ export function componentForm(args: {
   withMachineName?: boolean;
 }) {
   const components: SerializedComponent[] = args.formData.components.filter(
-    (c) => !Array.isArray(c) && c.name !== args.currentComponent?.name
+    (c) => !Array.isArray(c) && c.name !== args.currentComponent?.name,
   ) as SerializedComponent[];
+  const validators = findComponentValidators(
+    args.type.type.name,
+    args.plugins.validators,
+  );
+
   const settingsForm = args.type.editForm
     ? group(
         {
           label: t("componentSettings"),
         },
-        args.type.editForm()
+        args.type.editForm(),
       )
     : undefined;
   const widgetSettingsForm = findComponentWidgets(
     args.type.type.name,
-    args.plugins.widgets
+    args.plugins.widgets,
   )
     .filter((plugin) => plugin.editForm)
     .map((plugin): VariantDefinition => {
@@ -135,7 +142,7 @@ export function componentForm(args: {
           {
             label: t("widgetSettings"),
           },
-          plugin.editForm()
+          plugin.editForm(),
         ),
       ];
     });
@@ -173,8 +180,8 @@ export function componentForm(args: {
         required: true,
         widget: selectWidget(
           findComponentWidgets(args.type.type.name, args.plugins.widgets).map(
-            (widget) => [widget.type.title, widget.type.name]
-          )
+            (widget) => [widget.type.title, widget.type.name],
+          ),
         ),
       }),
       widgetSettings: widgetSettingsForm,
@@ -183,17 +190,131 @@ export function componentForm(args: {
           label: t("validators"),
           multiple: true,
           minItems: 1,
-          widget: detailsWidget({ open: true, summary: (v) => v ? v.type : "Validator" }),
-          multipleWidget: defaultMultipleWidget({ addItemLabel: t("addValidator")}),
+          multipleWidget: customMultipleWidget((props) => {
+            if (
+              !props.component.components ||
+              Array.isArray(props.component.components[0])
+            ) {
+              return null;
+            }
+            const alteredComponent = {
+              ...props.component,
+              components: [
+                {
+                  ...props.component.components[0],
+                  widget: hiddenFieldWidget(),
+                },
+                props.component.components[1],
+              ],
+            };
+            const addValidator = (value: unknown) => {
+              const newValidator = { type: value as string, settings: {} };
+              props.onChange(
+                props.value ? [...props.value, newValidator] : [newValidator],
+              );
+            };
+            const removeValidator = (index: number) => {
+              props.value &&
+                props.onChange(
+                  produce(props.value, (v) => {
+                    v.splice(index, 1);
+                  }),
+                );
+            };
+            const change = (index: number, value: any) => {
+              props.value &&
+                props.onChange(
+                  produce(props.value, (v) => {
+                    v[index] = value;
+                  }),
+                );
+            };
+            console.log(props.value);
+            const addedValidators = props.value
+              ? props.value.map((value, i) => {
+                  const definition = validators.find(
+                    (validator) => validator.type.name === value.type,
+                  );
+                  if (!definition) {
+                    return null;
+                  }
+                  const description = (
+                    <>
+                      <span>{definition.type.title}</span>
+                      <button
+                        onClick={() => removeValidator(i)}
+                        type="button"
+                        className="ml-auto"
+                        aria-label={t("remove")}
+                      >
+                        <X />
+                      </button>
+                    </>
+                  );
+                  return definition?.editForm ? (
+                    <details
+                      key={i}
+                      className={`w-full mb-2 ${props.theme.classes.details}`}
+                      open={true}
+                    >
+                      <summary
+                        className={`flex ${props.theme.classes.summary}`}
+                      >
+                        {description}
+                      </summary>
+                      <div className="px-4">
+                        <FormComponentView
+                          name={`${props.component.name}[${i}]`}
+                          index={i}
+                          id={
+                            props.id
+                              ? `${props.id}-${i}`
+                              : `${props.component.name}-${i}`
+                          }
+                          onChange={(value) => change(i, value)}
+                          component={alteredComponent}
+                          theme={props.theme}
+                          value={value}
+                        />
+                      </div>
+                    </details>
+                  ) : (
+                    <div
+                      key={i}
+                      className={`flex ${props.theme.classes.summary} mb-4 cursor-default`}
+                    >
+                      {description}
+                    </div>
+                  );
+                })
+              : null;
+            return (
+              <div>
+                <h3 className="text-xl mb-2">Validators</h3>
+                {addedValidators}
+                <div className="flex">
+                  <label className={`${props.theme.classes.label} my-3 mr-2`}>
+                    {props.component.components[0].label}
+                  </label>
+                  <FormComponentView
+                    hideLabel={true}
+                    name={"new_validator"}
+                    component={props.component.components[0]}
+                    theme={props.theme}
+                    index={0}
+                    value={undefined}
+                    onChange={addValidator}
+                  />
+                </div>
+              </div>
+            );
+          }),
         },
         {
           type: textField({
-            label: t("validator"),
+            label: t("addValidator"),
             widget: selectWidget(
-              findComponentValidators(
-                args.type.type.name,
-                args.plugins.validators
-              ).map((plugin) => [plugin.type.title, plugin.type.name])
+              validators.map((plugin) => [plugin.type.title, plugin.type.name]),
             ),
           }),
           settings: args.plugins.validators
@@ -207,11 +328,11 @@ export function componentForm(args: {
                   {
                     label: plugin.type.title,
                   },
-                  plugin.editForm()
+                  plugin.editForm(),
                 ),
               ];
             }),
-        }
+        },
       ),
       rules: group(
         {
@@ -226,7 +347,7 @@ export function componentForm(args: {
               components.map((component) => [
                 component.label ?? component.name ?? "",
                 component.name ?? "",
-              ])
+              ]),
             ),
           }),
           rule: components.map((component) => [
@@ -237,8 +358,8 @@ export function componentForm(args: {
               widget: selectWidget(
                 findComponentValidators(
                   component.type,
-                  args.plugins.validators
-                ).map((plugin) => [plugin.type.title, plugin.type.name])
+                  args.plugins.validators,
+                ).map((plugin) => [plugin.type.title, plugin.type.name]),
               ),
             }),
           ]),
@@ -253,11 +374,11 @@ export function componentForm(args: {
                   {
                     label: plugin.type.title,
                   },
-                  plugin.editForm()
+                  plugin.editForm(),
                 ),
               ];
             }),
-        }
+        },
       ),
       actions: group(
         { widget: horizontalGroupWidget() },
@@ -271,9 +392,9 @@ export function componentForm(args: {
               {t("cancel")}
             </a>
           )),
-        }
+        },
       ),
     },
-    { theme: tailwind }
+    { theme: tailwind },
   );
 }
