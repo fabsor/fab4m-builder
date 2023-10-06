@@ -28,7 +28,12 @@ import {
   findComponentWidgets,
   findPlugin,
 } from "../util";
-import { FormComponentTypePlugin, Plugins } from "..";
+import {
+  FormComponentTypePlugin,
+  Plugins,
+  Plugin,
+  ValidatorTypePlugin,
+} from "..";
 import invariant from "tiny-invariant";
 import t from "../translations";
 import { X } from "lucide-react";
@@ -190,127 +195,10 @@ export function componentForm(args: {
           label: t("validators"),
           multiple: true,
           minItems: 1,
-          multipleWidget: customMultipleWidget((props) => {
-            if (
-              !props.component.components ||
-              Array.isArray(props.component.components[0])
-            ) {
-              return null;
-            }
-            const alteredComponent = {
-              ...props.component,
-              components: [
-                {
-                  ...props.component.components[0],
-                  widget: hiddenFieldWidget(),
-                },
-                props.component.components[1],
-              ],
-            };
-            const addValidator = (value: unknown) => {
-              const newValidator = { type: value as string, settings: {} };
-              props.onChange(
-                props.value ? [...props.value, newValidator] : [newValidator],
-              );
-            };
-            const removeValidator = (index: number) => {
-              props.value &&
-                props.onChange(
-                  produce(props.value, (v) => {
-                    v.splice(index, 1);
-                  }),
-                );
-            };
-
-            const change = (index: number, value: any) => {
-              props.value &&
-                props.onChange(
-                  produce(props.value, (v) => {
-                    v[index] = value;
-                  }),
-                );
-            };
-            const addedValidators = props.value
-              ? props.value.map((value, i) => {
-                  const definition = validators.find(
-                    (validator) => validator.type.name === value.type,
-                  );
-                  if (!definition) {
-                    return null;
-                  }
-                  const description = (
-                    <>
-                      <span>{definition.type.title}</span>
-                      <button
-                        onClick={() => removeValidator(i)}
-                        type="button"
-                        className="ml-auto"
-                        aria-label={t("remove")}
-                      >
-                        <X />
-                      </button>
-                    </>
-                  );
-                  const component = (
-                    <FormComponentView
-                      name={`${props.component.name}[${i}]`}
-                      index={i}
-                      id={
-                        props.id
-                          ? `${props.id}-${i}`
-                          : `${props.component.name}-${i}`
-                      }
-                      onChange={(value) => change(i, value)}
-                      component={alteredComponent}
-                      theme={props.theme}
-                      value={value}
-                    />
-                  );
-                  return definition?.editForm ? (
-                    <details
-                      key={i}
-                      className={`w-full mb-2 ${props.theme.classes.details}`}
-                      open={true}
-                    >
-                      <summary
-                        className={`flex ${props.theme.classes.summary}`}
-                      >
-                        {description}
-                      </summary>
-                      <div className="px-4">{component}</div>
-                    </details>
-                  ) : (
-                    <div
-                      key={i}
-                      className={`flex ${props.theme.classes.summary} mb-4 cursor-default`}
-                    >
-                      {description}
-                      {component}
-                    </div>
-                  );
-                })
-              : null;
-            return (
-              <div>
-                <h3 className="text-xl mb-2">Validators</h3>
-                {addedValidators}
-                <div className="flex">
-                  <label className={`${props.theme.classes.label} my-3 mr-2`}>
-                    {props.component.components[0].label}
-                  </label>
-                  <FormComponentView
-                    hideLabel={true}
-                    name={"new_validator"}
-                    component={props.component.components[0]}
-                    theme={props.theme}
-                    index={0}
-                    value={undefined}
-                    onChange={addValidator}
-                  />
-                </div>
-              </div>
-            );
-          }),
+          multipleWidget: multipleValidatorsWidget(validators, (type) => ({
+            type,
+            settings: {},
+          })),
         },
         {
           type: textField({
@@ -340,6 +228,9 @@ export function componentForm(args: {
         {
           label: t("rules"),
           multiple: true,
+          multipleWidget: multipleValidatorsWidget(components, (component) => ({
+            component,
+          })),
           widget: horizontalGroupWidget(),
         },
         {
@@ -399,4 +290,130 @@ export function componentForm(args: {
     },
     { theme: tailwind },
   );
+}
+
+function multipleRulesWidget(
+  plugins: ValidatorTypePlugin[],
+  newItem: (type: string) => unknown,
+);
+
+function multipleValidatorsWidget(
+  plugins: ValidatorTypePlugin[],
+  newItem: (type: string) => unknown,
+) {
+  return customMultipleWidget<Record<string, unknown>>((props) => {
+    if (
+      !props.component.components ||
+      Array.isArray(props.component.components[0])
+    ) {
+      return null;
+    }
+    const alteredComponent = {
+      ...props.component,
+      components: [
+        {
+          ...props.component.components[0],
+          widget: hiddenFieldWidget(),
+        },
+        props.component.components[1],
+      ],
+    };
+    const addItem = (value: string) => {
+      const item = newItem(value);
+      props.onChange(props.value ? [...props.value, item] : [item]);
+    };
+    const removeItem = (index: number) => {
+      props.value &&
+        props.onChange(
+          produce(props.value, (v) => {
+            v.splice(index, 1);
+          }),
+        );
+    };
+
+    const change = (index: number, value: any) => {
+      props.value &&
+        props.onChange(
+          produce(props.value, (v) => {
+            v[index] = value;
+          }),
+        );
+    };
+    const items = props.value
+      ? props.value.map((value, i) => {
+          const definition = plugins.find(
+            (plugin) => plugin.type.name === value.type,
+          );
+          if (!definition) {
+            return null;
+          }
+          const description = (
+            <>
+              <span>{definition.type.title}</span>
+              <button
+                onClick={() => removeItem(i)}
+                type="button"
+                className="ml-auto"
+                aria-label={t("remove")}
+              >
+                <X />
+              </button>
+            </>
+          );
+          const component = (
+            <FormComponentView
+              name={`${props.component.name}[${i}]`}
+              index={i}
+              id={
+                props.id ? `${props.id}-${i}` : `${props.component.name}-${i}`
+              }
+              onChange={(value) => change(i, value)}
+              component={alteredComponent}
+              theme={props.theme}
+              value={value}
+            />
+          );
+          return definition?.editForm ? (
+            <details
+              key={i}
+              className={`w-full mb-2 ${props.theme.classes.details}`}
+              open={true}
+            >
+              <summary className={`flex ${props.theme.classes.summary}`}>
+                {description}
+              </summary>
+              <div className="px-4">{component}</div>
+            </details>
+          ) : (
+            <div
+              key={i}
+              className={`flex ${props.theme.classes.summary} mb-4 cursor-default`}
+            >
+              {description}
+              {component}
+            </div>
+          );
+        })
+      : null;
+    return (
+      <div>
+        <h3 className="text-xl mb-3">{props.component.label}</h3>
+        {items}
+        <div className="flex">
+          <label className={`${props.theme.classes.label} my-3 mr-2`}>
+            {props.component.components[0].label}
+          </label>
+          <FormComponentView
+            hideLabel={true}
+            name={"new_validator"}
+            component={props.component.components[0]}
+            theme={props.theme}
+            index={0}
+            value={undefined}
+            onChange={addItem}
+          />
+        </div>
+      </div>
+    );
+  });
 }
