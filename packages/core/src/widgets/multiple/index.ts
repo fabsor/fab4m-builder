@@ -5,6 +5,7 @@ import {
   MultipleWidgetType,
 } from "../../widget";
 import Multiple from "./Multiple";
+import Table from "./Table";
 import Tags from "./Tags";
 
 /**
@@ -111,6 +112,44 @@ export function tagsWidget<Value>(
 ): MultipleWidget<Value, TagsSettings | undefined> {
   return multipleWidget<Value, TagsSettings | undefined>({
     type: tagsWidgetType,
+    settings,
+  });
+}
+
+/**
+ * The table widget allows you to render multiple group components into
+ * a table where the columns represent the form components of the group.
+ * Each row is a representation of each item in the group.
+ *
+ * :::caution
+ * This widget only works with the group form component!
+ * :::
+ *
+ * @group Widgets
+ */
+export const tableWidgetType: MultipleWidgetType<any, MultipleSettings> = {
+  name: "table",
+  title: "Table",
+  widget: Table,
+  init: (settings) => tableWidget(settings),
+};
+
+/**
+ * The table widget allows you to render multiple group components into
+ * a table where the columns represent the form components of the group.
+ * Each row is a representation of each item in the group.
+ *
+ * :::caution
+ * This widget only works with the group form component!
+ * :::
+ *
+ * @group Widgets
+ */
+export function tableWidget<ValueType = Record<string, any>>(
+  settings: MultipleSettings = {},
+): MultipleWidget<ValueType, MultipleSettings> {
+  return multipleWidget<ValueType, MultipleSettings>({
+    type: tableWidgetType,
     settings,
   });
 }
