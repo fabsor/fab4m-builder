@@ -1,6 +1,7 @@
 import {
   allowedValuesValidator,
   disallowedValuesValidator,
+  exists,
   textAreaField,
   textField,
   ValuesSettings,
@@ -14,11 +15,11 @@ export const allowedValuesValidatorPlugin: ValidatorTypePlugin<
 > = {
   type: allowedValuesValidator,
   editForm: () => ({
+    values: textField({ multiple: true, label: t("allowedValues.items") }),
     message: textAreaField({
       required: true,
       label: t("allowedValues.message"),
     }),
-    values: textField({ multiple: true, label: t("allowedValues.items") }),
   }),
 };
 
@@ -28,10 +29,10 @@ export const disallowedValuesValidatorPlugin: ValidatorTypePlugin<
 > = {
   type: disallowedValuesValidator,
   editForm: () => ({
+    values: textField({ multiple: true, label: t("disallowedValues.items") }),
     message: textAreaField({
       required: true,
       label: t("disallowedValues.message"),
     }),
-    values: textField({ multiple: true, label: t("disallowedValues.items") }),
   }),
 };
