@@ -1,16 +1,25 @@
 import * as React from "react";
-import { MultipleSettings } from ".";
+import { MultipleSettings, TableSettings } from ".";
 import { MultipleWidgetProps } from "../../widget";
 import ValidationErrors from "../../components/ValidationErrors";
 import { filterComponents } from "../../rule";
-import { FormComponentView, componentErrors, useFormData } from "../..";
+import {
+  FormComponent,
+  FormComponentVariant,
+  FormComponentView,
+  FormComponentWrapper,
+  Labels,
+  Theme,
+  componentErrors,
+  useFormData,
+} from "../..";
 
 /**
  * The table react widget.
  * @group React multiple widgets
  */
 export default function Table(
-  props: MultipleWidgetProps<unknown, MultipleSettings>,
+  props: MultipleWidgetProps<unknown, TableSettings>,
 ): JSX.Element | null {
   const items = (props.value ?? []) as Array<Record<string, unknown>>;
   const addItem = () => props.onChange([...items, {}]);
@@ -21,7 +30,6 @@ export default function Table(
       newItems.splice(index, 1);
       props.onChange(newItems);
     };
-
     const components = filterComponents(
       props.component.components ?? [],
       formData,
@@ -82,28 +90,22 @@ export default function Table(
     );
   });
   return (
-    <div className={props.theme.classes.componentWrapper}>
-      {props.component.label && (
-        <label className={props.theme.classes.label} htmlFor={props.id}>
-          {props.component.label}
-        </label>
-      )}
+    <FormComponentWrapper {...props}>
       {itemComponents.length > 0 && (
         <table className={props.theme.classes.table}>
           <thead>
             <tr className={props.theme.classes.headTr}>
               {props.component.components?.map((c, i) => (
-                <th
-                  className={props.theme.classes.th}
+                <HeaderCol
+                  theme={props.theme}
+                  labels={props.labels}
+                  settings={props.settings}
+                  index={i}
+                  component={c}
                   key={i}
-                  id={
-                    "label-" + (Array.isArray(c) ? c[0].component.name : c.name)
-                  }
-                >
-                  {Array.isArray(c) ? c[0].component.label : c.label}
-                </th>
+                />
               ))}
-              <th />
+              <th className={props.theme.classes.operationsTh} />
             </tr>
           </thead>
           <tbody>{itemComponents}</tbody>
@@ -129,6 +131,41 @@ export default function Table(
       {props.errors && (
         <ValidationErrors errors={props.errors} classes={props.theme.classes} />
       )}
-    </div>
+    </FormComponentWrapper>
+  );
+}
+
+function HeaderCol(props: {
+  theme: Theme;
+  labels?: Labels;
+  index: number;
+  settings: TableSettings;
+  component: FormComponent | FormComponentVariant[];
+}) {
+  const component = Array.isArray(props.component)
+    ? props.component[0].component
+    : props.component;
+  const content = (
+    <>
+      <span id={"label-" + component.name}>{component.label}</span>
+      {component.required && (
+        <span
+          className={props.theme.classes.requiredIndicator}
+          aria-label={props.labels?.required}
+        >
+          *
+        </span>
+      )}
+    </>
+  );
+
+  return props.settings.headerColumn ? (
+    props.settings.headerColumn({
+      props: { className: props.theme.classes.th, children: content },
+      index: props.index,
+      component: component,
+    })
+  ) : (
+    <th className={props.theme.classes.th}>{content}</th>
   );
 }

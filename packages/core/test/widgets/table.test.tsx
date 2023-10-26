@@ -10,39 +10,41 @@ import {
   booleanField,
   selectWidget,
   tableWidget,
+  TableSettings,
 } from "../../src";
 
 describe("Table widget", () => {
-  const form = createForm({
-    group: group<Record<string, any>>(
-      {
-        label: "Multiple group",
+  const fieldGroup = group<Record<string, any>>(
+    {
+      label: "Multiple group",
+      multiple: true,
+      multipleWidget: tableWidget(),
+    },
+    {
+      first: textField({
+        label: "First",
         required: true,
-        multiple: true,
-        multipleWidget: tableWidget(),
-      },
-      {
-        first: textField({
-          label: "First",
-        }),
-        second: textField({
-          label: "Second",
-          widget: selectWidget(["option 1", "option 2"]),
-        }),
-        // The header needs to be rendered even though its'
-        third: [
-          [
-            "group.$.first",
-            equals("first"),
-            booleanField({
-              label: "Third",
-            }),
-          ],
+      }),
+      second: textField({
+        label: "Second",
+        widget: selectWidget(["option 1", "option 2"]),
+      }),
+      // The header needs to be rendered even though its'
+      third: [
+        [
+          "group.$.first",
+          equals("first"),
+          booleanField({
+            label: "Third",
+          }),
         ],
-        // This column will either be the third or the foirth column
-        fourth: textField({ label: "Fourth" }),
-      },
-    ),
+      ],
+      // This column will either be the third or the foirth column
+      fourth: textField({ label: "Fourth" }),
+    },
+  );
+  const form = createForm({
+    group: fieldGroup,
   });
   test("Table label", async () => {
     render(<StatefulFormView form={form} />);
@@ -54,6 +56,14 @@ describe("Table widget", () => {
     render(<StatefulFormView form={form} data={data} />);
     await screen.findByRole("table");
     expect(screen.queryAllByRole("columnheader")).toHaveLength(5);
+  });
+  test("required field in header", async () => {
+    const data = { group: [{}] };
+    render(<StatefulFormView form={form} data={data} />);
+    await screen.findByRole("table");
+    expect(
+      screen.getByRole("columnheader", { name: "First *" }),
+    ).toBeInTheDocument();
   });
   test("Table row", async () => {
     const data = { group: [{}] };
@@ -128,5 +138,25 @@ describe("Table widget", () => {
       expect(group[1].first).toBe("other text");
       expect(texts[1]).toHaveValue("other text");
     });
+  });
+  test("Header customization", async () => {
+    const settings: TableSettings = {
+      headerColumn: (args) => (
+        <th {...args.props} className={`override index-${args.index}`}>
+          {args.component.name === "first"
+            ? "Other column name"
+            : args.props.children}
+        </th>
+      ),
+    };
+    if (fieldGroup.multipleWidget) {
+      fieldGroup.multipleWidget.settings = settings;
+    }
+    render(<StatefulFormView form={form} data={{ group: [{}] }} />);
+    const columns = await screen.findAllByRole("columnheader");
+    expect(columns[0]).toHaveClass("override index-0");
+    expect(columns[0]).toHaveTextContent("Other column name");
+    expect(columns[1]).toHaveClass("override index-1");
+    expect(columns[2]).toHaveClass("override index-2");
   });
 });
