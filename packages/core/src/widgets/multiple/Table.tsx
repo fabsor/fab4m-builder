@@ -7,6 +7,7 @@ import {
   FormComponent,
   FormComponentVariant,
   FormComponentView,
+  FormComponentWithName,
   FormComponentWrapper,
   Labels,
   Theme,
@@ -37,54 +38,32 @@ export default function Table(
       value,
     );
     const cols = props.component.components?.map((c, i) => {
-      const component = Array.isArray(c) ? c[0].component : c;
-      const match = components.find(
-        (filteredComponent) => filteredComponent.name === component.name,
-      );
-      const changeChildValue = (name: string, newValue: unknown) => {
-        const newItems = [...items];
-        newItems[index] = {
-          ...value,
-          [name]: newValue,
-        };
-        props.onChange(newItems);
-      };
       return (
-        <td key={i} className={props.theme.classes.td}>
-          {match ? (
-            <FormComponentView
-              value={value[match.name]}
-              hideLabel={true}
-              attributes={{ "aria-labelledby": `label-${component.name}` }}
-              name={`${props.name}[${index}][${component.name}]`}
-              index={index}
-              errors={
-                props.errors && componentErrors(`/${index}`, props.errors)
-              }
-              theme={props.theme}
-              ssr={props.ssr}
-              onChange={(value) => changeChildValue(component.name, value)}
-              component={match}
-            />
-          ) : null}
-        </td>
+        <RowCol
+          {...props}
+          items={items}
+          key={i}
+          components={components}
+          index={index}
+          colIndex={i}
+          value={value}
+          component={c}
+        />
       );
     });
     return (
       <tr className={props.theme.classes.tr} key={index}>
         {cols}
-        <td className={props.theme.classes.td}>
-          <div className={props.theme.classes.rowOperations}>
-            {!props.component.disabled && (
-              <button
-                className={props.theme.classes.removeItem}
-                type={"button"}
-                onClick={removeValue}
-              >
-                {props.settings.removeItemLabel ?? "Remove"}
-              </button>
-            )}
-          </div>
+        <td className={props.theme.classes.operationsTd}>
+          {!props.component.disabled && (
+            <button
+              className={props.theme.classes.removeItem}
+              type={"button"}
+              onClick={removeValue}
+            >
+              {props.settings.removeItemLabel ?? "Remove"}
+            </button>
+          )}
         </td>
       </tr>
     );
@@ -167,5 +146,54 @@ function HeaderCol(props: {
     })
   ) : (
     <th className={props.theme.classes.th}>{content}</th>
+  );
+}
+
+function RowCol(
+  props: Omit<MultipleWidgetProps, "value" | "component"> & {
+    index: number;
+    colIndex: number;
+    settings: TableSettings;
+    component: FormComponentVariant[] | FormComponent;
+    components: FormComponentWithName[];
+    items: Array<Record<string, unknown>>;
+    value: Record<string, unknown>;
+  },
+) {
+  const component = Array.isArray(props.component)
+    ? props.component[0].component
+    : props.component;
+  const match = props.components.find(
+    (filteredComponent) => filteredComponent.name === component.name,
+  );
+  const changeChildValue = (name: string, newValue: unknown) => {
+    const newItems = [...props.items];
+    newItems[props.index] = {
+      ...props.value,
+      [name]: newValue,
+    };
+    props.onChange(newItems);
+  };
+  const content = match ? (
+    <FormComponentView
+      value={props.value[match.name]}
+      hideLabel={true}
+      attributes={{ "aria-labelledby": `label-${component.name}` }}
+      name={`${props.name}[${props.index}][${component.name}]`}
+      errors={props.errors && componentErrors(`/${props.index}`, props.errors)}
+      theme={props.theme}
+      ssr={props.ssr}
+      onChange={(value) => changeChildValue(component.name ?? "", value)}
+      component={match}
+    />
+  ) : null;
+  return props.settings.rowColumn ? (
+    props.settings.rowColumn({
+      props: { className: props.theme.classes.th, children: content },
+      index: props.colIndex,
+      component: component,
+    })
+  ) : (
+    <td className={props.theme.classes.td}>{content}</td>
   );
 }
