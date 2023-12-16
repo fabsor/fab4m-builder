@@ -26,7 +26,7 @@ interface ComponentData {
   rules: Array<{
     component: string;
     rule: string;
-    settings?: Record<string, unknown>;
+    settings?: unknown;
   }>;
   widgetSettings?: Record<string, unknown>;
 }
@@ -76,7 +76,6 @@ export default function EditComponent() {
       component.widget.type,
       context.plugins.widgets,
     );
-
     changeData({
       label: component.label,
       name: component.name,
@@ -92,6 +91,7 @@ export default function EditComponent() {
             : validator.settings,
         };
       }),
+
       rules: component.rules.map((rule) => {
         if (!Array.isArray(rule)) {
           throw new Error("Unexpected rule");
@@ -102,7 +102,7 @@ export default function EditComponent() {
           rule: rule[1].type,
           settings: plugin.formData
             ? plugin.formData(rule[1].settings)
-            : (rule[1].settings as Record<string, unknown>),
+            : rule[1].settings,
         };
       }),
       widgetSettings: widgetPlugin.formData
@@ -110,12 +110,16 @@ export default function EditComponent() {
         : (component.widget.settings as Record<string, unknown>),
     });
   }, [component.name]);
+  console.log(data);
+
   const form = useForm(
     () =>
       componentForm({
         type: plugin,
         plugins: context.plugins,
-        formData: currentForm,
+        components: currentForm.components.filter(
+          (c) => !Array.isArray(c),
+        ) as SerializedComponent[],
         currentComponent: component,
       }),
     [plugin],

@@ -20,7 +20,7 @@
         "outDir": "dist",
         "baseUrl": ".",
         "skipLibCheck": true,
-        "types": ["jest"],
+        "types": ["vitest/globals"],
     },
   "include": [
     "src/**/*.ts",

@@ -3,33 +3,20 @@ import {
   maxLengthValidator,
   minLengthValidator,
 } from "@fab4m/fab4m";
-import t from "../translations";
 import { ValidatorTypePlugin } from "..";
 
-export const minLengthValidatorPlugin: ValidatorTypePlugin<
-  number,
-  { minLength: number }
-> = {
+export const minLengthValidatorPlugin: ValidatorTypePlugin<number, number> = {
   type: minLengthValidator,
-  settingsFromForm: ({ minLength }) => minLength,
-  editForm: () => ({
-    minLength: floatField({
+  component: () =>
+    floatField({
       required: true,
-      label: t("length.minLength"),
     }),
-  }),
 };
 
-export const maxLengthValidatorPlugin: ValidatorTypePlugin<
-  number,
-  { maxLength: number }
-> = {
+export const maxLengthValidatorPlugin: ValidatorTypePlugin<number, number> = {
   type: maxLengthValidator,
-  settingsFromForm: ({ maxLength }) => maxLength,
-  editForm: () => ({
-    maxLength: floatField({
+  component: () =>
+    floatField({
       required: true,
-      label: t("length.maxLength"),
     }),
-  }),
 };

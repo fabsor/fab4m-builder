@@ -59,11 +59,17 @@ export let translations = {
   widgetSettings: "Widget settings",
   componentSettings: "Component settings",
   toastClose: "Close",
+  na: "N/A",
+  addValidator: "Add validator",
+  addRule: "Add rule",
+  validatorType: "Validator",
+  value: "Value",
+  "allowedValues.description": "Enter each value separated by comma (,)",
 };
 
 export default function t(
   translation: keyof typeof translations,
-  replacements: Record<string, string> = {}
+  replacements: Record<string, string> = {},
 ) {
   let translated = translations[translation] ?? translation;
   for (const key in replacements) {

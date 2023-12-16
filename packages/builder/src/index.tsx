@@ -9,7 +9,11 @@ import {
   FormComponent,
   Theme,
 } from "@fab4m/fab4m";
-import { ActionFunctionArgs, createBrowserRouter, LoaderFunctionArgs } from "react-router-dom";
+import {
+  ActionFunctionArgs,
+  createBrowserRouter,
+  LoaderFunctionArgs,
+} from "react-router-dom";
 import { FormBuilder } from "./components/FormBuilder";
 import { routes } from "./router";
 export * from "./types";
@@ -28,7 +32,7 @@ export interface Plugin<SettingsType, SettingsFormData> {
 
 export interface FormComponentTypePlugin<
   SettingsType = unknown,
-  SettingsFormData = Record<string, unknown>
+  SettingsFormData = Record<string, unknown>,
 > extends Plugin<SettingsType, SettingsFormData> {
   type: FormComponentType<SettingsType>;
   init: (name: string) => FormComponent;
@@ -36,17 +40,18 @@ export interface FormComponentTypePlugin<
 
 export interface WidgetTypePlugin<
   SettingsType = unknown,
-  SettingsFormData = Record<string, unknown>
+  SettingsFormData = Record<string, unknown>,
 > extends Plugin<SettingsType, SettingsFormData> {
   type: WidgetType;
 }
 
-export interface ValidatorTypePlugin<
+export type ValidatorTypePlugin<
   SettingsType = unknown,
-  SettingsFormData = Record<string, unknown>
-> extends Plugin<SettingsType, SettingsFormData> {
+  SettingsFormData = unknown,
+> = Plugin<SettingsType, SettingsFormData> & {
+  component?: () => FormComponent<SettingsFormData>;
   type: ValidatorType;
-}
+};
 
 export interface FlashMessage {
   title: string;
@@ -54,12 +59,21 @@ export interface FlashMessage {
   type: "success" | "error";
 }
 
-
 export interface FormStorage {
   loadForm: (context: LoaderFunctionArgs) => Promise<SerializedForm>;
-  addComponent: (newComponent: SerializedComponent, context: ActionFunctionArgs) => Promise<void>;
-  editComponent: (key: string, component: SerializedComponent, context: ActionFunctionArgs) => Promise<void>;
-  saveForm: (form: SerializedForm, context: ActionFunctionArgs) => Promise<SerializedForm>;
+  addComponent: (
+    newComponent: SerializedComponent,
+    context: ActionFunctionArgs,
+  ) => Promise<void>;
+  editComponent: (
+    key: string,
+    component: SerializedComponent,
+    context: ActionFunctionArgs,
+  ) => Promise<void>;
+  saveForm: (
+    form: SerializedForm,
+    context: ActionFunctionArgs,
+  ) => Promise<SerializedForm>;
   getFlashMessage: (reset: boolean) => Promise<FlashMessage | null>;
   flash: (message: FlashMessage) => Promise<void>;
 }
@@ -82,6 +96,6 @@ export function formBuilder(args: FormBuilderArgs) {
 }
 
 export { routes };
-
+export * from "./forms/component";
 export * from "./components/FormBuilder";
 export * from "./translations";

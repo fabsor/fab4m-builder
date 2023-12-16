@@ -3,10 +3,8 @@ import {
   booleanField,
   content,
   createForm,
-  customMultipleWidget,
   equals,
   exists,
-  FormComponentView,
   fromFormData,
   group,
   hiddenFieldWidget,
@@ -19,6 +17,7 @@ import {
   submit,
   tailwind,
   textAreaField,
+  tableWidget,
   textField,
   textFieldWidget,
   VariantDefinition,
@@ -28,16 +27,9 @@ import {
   findComponentWidgets,
   findPlugin,
 } from "../util";
-import {
-  FormComponentTypePlugin,
-  Plugins,
-  Plugin,
-  ValidatorTypePlugin,
-} from "..";
+import { FormComponentTypePlugin, Plugins } from "..";
 import invariant from "tiny-invariant";
 import t from "../translations";
-import { X } from "lucide-react";
-import { produce } from "immer";
 
 export interface ComponentData {
   label: string;
@@ -50,11 +42,11 @@ export interface ComponentData {
   actions: unknown;
   settings?: Record<string, unknown>;
   widget: string;
-  validators: Array<{ type: string; settings: Record<string, unknown> }>;
+  validators: Array<{ type: string; settings: unknown }>;
   rules: Array<{
     component: string;
     rule: string;
-    settings: Record<string, unknown>;
+    settings: unknown | undefined;
   }>;
   widgetSettings?: Record<string, unknown>;
 }
@@ -70,7 +62,13 @@ export async function componentFromFormData(
   const widgetName = formData.get("widget")?.toString();
   const widget = findPlugin(widgetName ?? "", plugins.widgets);
   invariant(widget.type.init);
-  const form = componentForm({ type, plugins, formData: editForm });
+  const form = componentForm({
+    type,
+    plugins,
+    components: editForm.components.filter(
+      (c) => !Array.isArray(c),
+    ) as SerializedComponent[],
+  });
   const data = fromFormData(form, formData);
   const serializedComponent = serializeComponent({
     ...data,
@@ -95,6 +93,7 @@ export async function componentFromFormData(
         : validator.settings,
     };
   });
+
   serializedComponent.rules = data.rules.map((rule) => {
     const plugin = findPlugin(rule.rule, plugins.validators);
     return [
@@ -113,13 +112,11 @@ export async function componentFromFormData(
 export function componentForm(args: {
   type: FormComponentTypePlugin;
   plugins: Plugins;
-  formData: SerializedForm;
+  components: SerializedComponent[];
   currentComponent?: SerializedComponent;
   withMachineName?: boolean;
 }) {
-  const components: SerializedComponent[] = args.formData.components.filter(
-    (c) => !Array.isArray(c) && c.name !== args.currentComponent?.name,
-  ) as SerializedComponent[];
+  const components = args.components;
   const validators = findComponentValidators(
     args.type.type.name,
     args.plugins.validators,
@@ -151,6 +148,29 @@ export function componentForm(args: {
         ),
       ];
     });
+
+  const validatorFormItems: VariantDefinition[] = args.plugins.validators
+    .filter((plugin) => plugin.component)
+    .map((plugin) => {
+      invariant(plugin.component);
+      return [
+        "validators.$.type",
+        equals(plugin.type.name),
+        { ...plugin.component(), label: t("value") },
+      ];
+    });
+
+  const ruleFormItems: VariantDefinition[] = args.plugins.validators
+    .filter((plugin) => plugin.component)
+    .map((plugin) => {
+      invariant(plugin.component);
+      return [
+        "rules.$.rule",
+        equals(plugin.type.name),
+        { ...plugin.component(), required: true, label: t("value") },
+      ];
+    });
+
   return createForm<ComponentData>(
     {
       label: textField({
@@ -195,47 +215,52 @@ export function componentForm(args: {
           label: t("validators"),
           multiple: true,
           minItems: 1,
-          multipleWidget: multipleValidatorsWidget(validators, (type) => ({
-            type,
-            settings: {},
-          })),
+          multipleWidget: tableWidget({
+            addItemLabel: t("addValidator"),
+            headerColumn: ({ index, props }) => (
+              <th
+                {...props}
+                className={
+                  index === 0 ? `${props.className} w-[200px]` : props.className
+                }
+              />
+            ),
+            rowColumn: ({ props, component }) => (
+              <td
+                {...props}
+                className={`p-2 text-center ${component.type.name} ${
+                  component.type.name === "content"
+                    ? "align-middle"
+                    : "align-top"
+                }`}
+              />
+            ),
+          }),
         },
         {
           type: textField({
-            label: t("addValidator"),
+            label: t("validatorType"),
+            required: true,
             widget: selectWidget(
               validators.map((plugin) => [plugin.type.title, plugin.type.name]),
             ),
           }),
-          settings: args.plugins.validators
-            .filter((plugin) => plugin.editForm)
-            .map((plugin) => {
-              invariant(plugin.editForm);
-              return [
-                "validators.$.type",
-                equals(plugin.type.name),
-                group(
-                  {
-                    label: plugin.type.title,
-                  },
-                  plugin.editForm(),
-                ),
-              ];
-            }),
+          settings: [
+            ...validatorFormItems,
+            ["validators.$.type", exists(), content({}, () => t("na"))],
+          ],
         },
       ),
       rules: group(
         {
           label: t("rules"),
           multiple: true,
-          multipleWidget: multipleValidatorsWidget(components, (component) => ({
-            component,
-          })),
-          widget: horizontalGroupWidget(),
+          multipleWidget: tableWidget({ addItemLabel: t("addRule") }),
         },
         {
           component: textField({
             label: t("component"),
+            required: true,
             widget: selectWidget(
               components.map((component) => [
                 component.label ?? component.name ?? "",
@@ -256,21 +281,10 @@ export function componentForm(args: {
               ),
             }),
           ]),
-          settings: args.plugins.validators
-            .filter((plugin) => plugin.editForm)
-            .map((plugin) => {
-              invariant(plugin.editForm);
-              return [
-                "rules.$.rule",
-                equals(plugin.type.name),
-                group(
-                  {
-                    label: plugin.type.title,
-                  },
-                  plugin.editForm(),
-                ),
-              ];
-            }),
+          settings: [
+            ...ruleFormItems,
+            ["rules.$.rule", exists(), content({}, () => <>{t("na")}</>)],
+          ],
         },
       ),
       actions: group(
@@ -290,130 +304,4 @@ export function componentForm(args: {
     },
     { theme: tailwind },
   );
-}
-
-function multipleRulesWidget(
-  plugins: ValidatorTypePlugin[],
-  newItem: (type: string) => unknown,
-);
-
-function multipleValidatorsWidget(
-  plugins: ValidatorTypePlugin[],
-  newItem: (type: string) => unknown,
-) {
-  return customMultipleWidget<Record<string, unknown>>((props) => {
-    if (
-      !props.component.components ||
-      Array.isArray(props.component.components[0])
-    ) {
-      return null;
-    }
-    const alteredComponent = {
-      ...props.component,
-      components: [
-        {
-          ...props.component.components[0],
-          widget: hiddenFieldWidget(),
-        },
-        props.component.components[1],
-      ],
-    };
-    const addItem = (value: string) => {
-      const item = newItem(value);
-      props.onChange(props.value ? [...props.value, item] : [item]);
-    };
-    const removeItem = (index: number) => {
-      props.value &&
-        props.onChange(
-          produce(props.value, (v) => {
-            v.splice(index, 1);
-          }),
-        );
-    };
-
-    const change = (index: number, value: any) => {
-      props.value &&
-        props.onChange(
-          produce(props.value, (v) => {
-            v[index] = value;
-          }),
-        );
-    };
-    const items = props.value
-      ? props.value.map((value, i) => {
-          const definition = plugins.find(
-            (plugin) => plugin.type.name === value.type,
-          );
-          if (!definition) {
-            return null;
-          }
-          const description = (
-            <>
-              <span>{definition.type.title}</span>
-              <button
-                onClick={() => removeItem(i)}
-                type="button"
-                className="ml-auto"
-                aria-label={t("remove")}
-              >
-                <X />
-              </button>
-            </>
-          );
-          const component = (
-            <FormComponentView
-              name={`${props.component.name}[${i}]`}
-              index={i}
-              id={
-                props.id ? `${props.id}-${i}` : `${props.component.name}-${i}`
-              }
-              onChange={(value) => change(i, value)}
-              component={alteredComponent}
-              theme={props.theme}
-              value={value}
-            />
-          );
-          return definition?.editForm ? (
-            <details
-              key={i}
-              className={`w-full mb-2 ${props.theme.classes.details}`}
-              open={true}
-            >
-              <summary className={`flex ${props.theme.classes.summary}`}>
-                {description}
-              </summary>
-              <div className="px-4">{component}</div>
-            </details>
-          ) : (
-            <div
-              key={i}
-              className={`flex ${props.theme.classes.summary} mb-4 cursor-default`}
-            >
-              {description}
-              {component}
-            </div>
-          );
-        })
-      : null;
-    return (
-      <div>
-        <h3 className="text-xl mb-3">{props.component.label}</h3>
-        {items}
-        <div className="flex">
-          <label className={`${props.theme.classes.label} my-3 mr-2`}>
-            {props.component.components[0].label}
-          </label>
-          <FormComponentView
-            hideLabel={true}
-            name={"new_validator"}
-            component={props.component.components[0]}
-            theme={props.theme}
-            index={0}
-            value={undefined}
-            onChange={addItem}
-          />
-        </div>
-      </div>
-    );
-  });
 }

@@ -13,8 +13,9 @@ import {
   groupWidgetType,
   basicDark,
   tailwind,
+  generateSchema,
 } from "@fab4m/fab4m";
-import { formBuilder } from "../../src";
+import { componentForm, formBuilder } from "../../src";
 import "react-datepicker/dist/react-datepicker.css";
 import "@fab4m/autocomplete/src/style.css";
 import "./index.css";
@@ -84,6 +85,52 @@ const form = createForm({
   text: textField({ label: "Text" }),
 });
 
+const plugins = {
+  types: [
+    textFieldPlugin,
+    integerFieldPlugin,
+    floatFieldPlugin,
+    emailFieldPlugin,
+    fileFieldPlugin,
+    dateFieldPlugin,
+    dateTimeFieldPlugin,
+    dateRangeFieldPlugin,
+    pageBreakPlugin,
+    urlFieldPlugin,
+    groupPlugin,
+  ],
+  widgets: [
+    textFieldWidgetPlugin,
+    numberFieldWidgetPlugin,
+    emailFieldWidgetPlugin,
+    fileUploadWidgetPlugin,
+    datePickerWidgetPlugin,
+    dateTimePickerWidgetPlugin,
+    dateRangePickerWidgetPlugin,
+    pageBreakWidgetPlugin,
+    linkFieldWidgetPlugin,
+    groupWidgetPlugin,
+    detailsWidgetPlugin,
+    fieldsetWidgetPlugin,
+    horizontalGroupWidgetPlugin,
+    selectWidgetPlugin,
+    radiosWidgetPlugin,
+    textAreaWidgetPlugin,
+    autocompleteWidgetPlugin,
+  ],
+  validators: [
+    minValidatorPlugin,
+    existsValidatorPlugin,
+    allowedValuesValidatorPlugin,
+    disallowedValuesValidatorPlugin,
+    minLengthValidatorPlugin,
+    maxLengthValidatorPlugin,
+  ],
+};
+
+generateSchema(
+  componentForm({ type: textFieldPlugin, plugins, components: [] }),
+);
 const FormBuilder = formBuilder({
   plugins: {
     types: [

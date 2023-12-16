@@ -52,10 +52,12 @@
 
 * fab4m.com
 
-** WTF validators
+** DONE WTF validators
 ** TODO Profile
+
 *** TODO Content field
 ** DONE reduce size of dnd icon
+** TODO Margin bottom for add component
 ** DONE make cancel button less prevalent
 ** DONE Render forms and integrate with remix
 ** DONE Remove front page, redirect to login
