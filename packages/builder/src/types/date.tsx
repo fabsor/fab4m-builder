@@ -23,6 +23,7 @@ import {
   textField,
   exists,
   not,
+  SchemaProperty,
 } from "@fab4m/fab4m";
 import t from "../translations";
 import { invariantReturn } from "../util";
@@ -82,16 +83,58 @@ function datePickerSettingsFromForm(data: SerializedDateFieldSettings) {
       ? availableLocales.find((l) => l.code === data.locale)
       : undefined,
     locales: data.locales?.map((locale) =>
-      invariantReturn(availableLocales.find((l) => l.code === locale))
+      invariantReturn(availableLocales.find((l) => l.code === locale)),
     ),
   };
 }
+
+const datePickerSchema: SchemaProperty = {
+  type: "object",
+  properties: {
+    locale: {
+      type: "string",
+    },
+    locales: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+    },
+    useBrowserLocale: {
+      type: "boolean",
+    },
+    format: {
+      type: "string",
+    },
+  },
+};
+
+const dateRangeWidgetSchema: SchemaProperty = {
+  type: "object",
+  properties: {
+    ...datePickerSchema.properties,
+    fromLabel: {
+      type: "string",
+    },
+    toLabel: {
+      type: "string",
+    },
+    optionalEndDate: {
+      type: "boolean",
+    },
+    withTime: {
+      type: "boolean",
+    },
+  },
+  required: ["fromLabel", "toLabel"],
+};
 
 const datePickerSettings: Partial<
   WidgetTypePlugin<DateFieldWidgetSettings, SerializedDateFieldSettings>
 > = {
   editForm: datePickerForm,
   settingsFromForm: datePickerSettingsFromForm,
+  settingsSchema: () => datePickerSchema,
 };
 
 export const datePickerWidgetPlugin: WidgetTypePlugin<
@@ -142,4 +185,5 @@ export const dateRangePickerWidgetPlugin: WidgetTypePlugin<
       ...datePickerSettingsFromForm(data),
     };
   },
+  settingsSchema: () => dateRangeWidgetSchema,
 };

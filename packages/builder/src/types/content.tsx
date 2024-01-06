@@ -19,4 +19,13 @@ export const contentWidgetPlugin: WidgetTypePlugin<
   editForm: () => ({
     content: textAreaField({ required: true }),
   }),
+  settingsSchema: () => ({
+    type: "object",
+    properties: {
+      content: {
+        type: "string",
+      },
+    },
+    required: ["content"],
+  }),
 };

@@ -11,6 +11,9 @@ export const minLengthValidatorPlugin: ValidatorTypePlugin<number, number> = {
     floatField({
       required: true,
     }),
+  settingsSchema: () => ({
+    type: "boolean",
+  }),
 };
 
 export const maxLengthValidatorPlugin: ValidatorTypePlugin<number, number> = {
@@ -19,4 +22,7 @@ export const maxLengthValidatorPlugin: ValidatorTypePlugin<number, number> = {
     floatField({
       required: true,
     }),
+  settingsSchema: () => ({
+    type: "boolean",
+  }),
 };

@@ -7,6 +7,9 @@ export const minValidatorPlugin: ValidatorTypePlugin<number, number> = {
     integerField({
       required: true,
     }),
+  settingsSchema: () => ({
+    type: "integer",
+  }),
 };
 
 export const maxValidatorPlugin: ValidatorTypePlugin<number, number> = {
@@ -15,4 +18,7 @@ export const maxValidatorPlugin: ValidatorTypePlugin<number, number> = {
     integerField({
       required: true,
     }),
+  settingsSchema: () => ({
+    type: "integer",
+  }),
 };

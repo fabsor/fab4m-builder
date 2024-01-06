@@ -32,6 +32,12 @@ export const detailsWidgetPlugin: WidgetTypePlugin<
   editForm: () => ({
     open: booleanField({ label: t("open") }),
   }),
+  settingsSchema: () => ({
+    type: "object",
+    properties: {
+      open: { type: "boolean" },
+    },
+  }),
 };
 
 export const horizontalGroupWidgetPlugin: WidgetTypePlugin = {

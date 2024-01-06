@@ -22,6 +22,10 @@ export const allowedValuesValidatorPlugin: ValidatorTypePlugin<
       description: t("allowedValues.description"),
       required: true,
     }),
+  settingsSchema: () => ({
+    type: "array",
+    items: { type: "string" },
+  }),
 };
 
 export const disallowedValuesValidatorPlugin: ValidatorTypePlugin<
@@ -39,4 +43,8 @@ export const disallowedValuesValidatorPlugin: ValidatorTypePlugin<
       description: t("allowedValues.description"),
       required: true,
     }),
+  settingsSchema: () => ({
+    type: "array",
+    items: { type: "string" },
+  }),
 };

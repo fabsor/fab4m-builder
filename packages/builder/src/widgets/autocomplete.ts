@@ -42,4 +42,16 @@ export const autocompleteWidgetPlugin: WidgetTypePlugin<
   editForm: () => ({
     items: textAreaField({ required: true, label: t("autocomplete.options") }),
   }),
+  settingsSchema: () => ({
+    type: "object",
+    properties: {
+      items: {
+        type: "array",
+        items: [{ type: "string" }, { type: "string" }],
+        minItems: 2,
+        maxItems: 2,
+      },
+    },
+    required: ["items"],
+  }),
 };

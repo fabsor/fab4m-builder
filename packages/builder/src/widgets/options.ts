@@ -6,10 +6,20 @@ import {
   SelectWidgetSettings,
   textField,
   textAreaField,
+  SchemaProperty,
 } from "@fab4m/fab4m";
 import { WidgetTypePlugin } from "src";
 import t from "../translations";
 
+const optionsSchema: SchemaProperty = {
+  type: "object",
+  properties: {
+    options: {
+      type: "string",
+    },
+  },
+  required: ["options"],
+};
 function optionsToText(options: Options<string> | Option<string>[]) {
   return options
     .map((option) => (Array.isArray(option) ? option.join("|") : option))
@@ -48,6 +58,7 @@ export const selectWidgetPlugin: WidgetTypePlugin<
     options: textAreaField({ required: true, label: t("options.options") }),
     notSelectedLabel: textField({ label: t("options.notSelectedLabel") }),
   }),
+  settingsSchema: () => optionsSchema,
 };
 
 export const radiosWidgetPlugin: WidgetTypePlugin<
@@ -64,4 +75,5 @@ export const radiosWidgetPlugin: WidgetTypePlugin<
   editForm: () => ({
     options: textAreaField({ required: true, label: t("options.options") }),
   }),
+  settingsSchema: () => optionsSchema,
 };
