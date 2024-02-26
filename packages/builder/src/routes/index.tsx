@@ -49,7 +49,10 @@ import SortableItem from "../components/SortableItem";
 import { createPortal } from "react-dom";
 import { Pencil, Trash2, Settings } from "lucide-react";
 import ToastMessage from "../components/Toasts";
-
+export type LoaderData = {
+  form: SerializedForm;
+  message: FlashMessage | null;
+};
 export function loader({ storage }: LoaderCreatorArgs) {
   return async (args: LoaderFunctionArgs) => {
     return {
@@ -69,7 +72,7 @@ export function action({ storage }: ActionCreatorArgs): ActionFunction {
     if (to.startsWith("drop-")) {
       const parentKey = to.split("drop-")[1];
       const parent = form.components.find(
-        (c) => !Array.isArray(c) && c.name === parentKey
+        (c) => !Array.isArray(c) && c.name === parentKey,
       );
       if (parent && !Array.isArray(parent)) {
         parent.components ??= [];
@@ -110,7 +113,7 @@ export default function FormBuilder(props: {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   function handleDragEnd(event: DragEndEvent) {
@@ -119,7 +122,7 @@ export default function FormBuilder(props: {
     if (over && active.id !== over.id) {
       fetcher.submit(
         { from: active.id.toString(), to: over.id.toString() },
-        { method: "post" }
+        { method: "post" },
       );
     }
   }
@@ -166,7 +169,7 @@ export default function FormBuilder(props: {
                     <Item title={items.get(activeItem)?.label ?? ""}></Item>
                   ) : null}
                 </DragOverlay>,
-                document.body
+                document.body,
               )}
             </DndContext>
           </div>
@@ -177,7 +180,6 @@ export default function FormBuilder(props: {
           )}
           {!params.component && outlet}
         </section>
-
         <section className="col-span-2 border-l bg-slate-100 dark:border-slate-700 p-4 dark:bg-slate-800">
           <h2 className={styles.h2}>Preview</h2>
           <div>
@@ -267,7 +269,7 @@ function Components(props: ComponentsProps) {
               </div>
             )}
           </SortableItem>
-        </React.Fragment>
+        </React.Fragment>,
       );
     }
   }
@@ -275,7 +277,7 @@ function Components(props: ComponentsProps) {
     <div>
       <SortableContext
         items={[...props.items.keys()].filter((k) =>
-          k.startsWith(props.parent)
+          k.startsWith(props.parent),
         )}
         strategy={verticalListSortingStrategy}
       >
@@ -292,7 +294,7 @@ export const Item = forwardRef<HTMLDivElement, { title: string }>(
         <div className={`${styles.item} mb-0`}>{title}</div>
       </div>
     );
-  }
+  },
 );
 
 export function useFormBuilderContext() {

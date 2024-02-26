@@ -22,7 +22,8 @@
   },
   "scripts": {
     "test": "vitest",
-    "test:unit": "vitest --run",
+      "test:unit": "vitest --run",
+      "coverage": "vitest run --coverage",
     "build-browser": "esbuild --external:react --external:react-dom --external:react-router-dom  --external:@fab4m/fab4m --external:@fab4m/routerforms --external:react-router-dom --bundle src/index.tsx --format=esm --outfile=dist/index.es.js",
     "build-node": "esbuild --external:react-router-dom --platform=node --external:react --external:react-dom --external:fab4m --minify --bundle src/index.tsx --outfile=dist/index.cjs.js",
     "build": "npm run build-browser && npm run build-node && tsc -d"

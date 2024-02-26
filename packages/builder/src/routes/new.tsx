@@ -13,22 +13,21 @@ import styles from "../styles";
 import { serializeComponent, SerializedComponentsList } from "@fab4m/fab4m";
 import t from "../translations";
 import { icons } from "../icons";
+import invariant from "tiny-invariant";
 
 export function action({ plugins, storage }: ActionCreatorArgs) {
   return async (args: ActionFunctionArgs) => {
     const data = await args.request.formData();
     const type = data.get("type");
     const parent = data.get("parent");
-    if (!type) {
-      throw new Error("Type not provided.");
-    }
+    invariant(type);
     const form = await storage.loadForm(args);
     const plugin = findPlugin(type.toString(), plugins.types);
     let list: SerializedComponentsList;
     if (parent) {
       const parentComponent = findComponentFromKey(
         form.components,
-        parent.toString()
+        parent.toString(),
       );
       parentComponent.components ??= [];
       list = parentComponent.components;
@@ -38,14 +37,13 @@ export function action({ plugins, storage }: ActionCreatorArgs) {
     const component = plugin.init(`component__${list.length}`);
     component.label = plugin.type.title;
     list.push(serializeComponent(component));
-
     await storage.saveForm(form, args);
     return redirect(
       component.type.splitsForm
         ? ".."
         : `../edit/${
             parent ? `${parent.toString().replace("root:", "")}:` : "root:"
-          }${component.name}`
+          }${component.name}`,
     );
   };
 }

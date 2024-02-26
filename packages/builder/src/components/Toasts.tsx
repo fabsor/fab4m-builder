@@ -29,6 +29,7 @@ export default function ToastMessage(props: { toast: FlashMessage }) {
           <button
             type="button"
             className="cursor-pointer hover:bg-emerald-900"
+            aria-label={t("toastClose")}
             onClick={() => changeOpen(false)}
           >
             <X />
